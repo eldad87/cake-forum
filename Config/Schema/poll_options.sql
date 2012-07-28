@@ -1,7 +1,7 @@
 
-DROP TABLE IF EXISTS `{prefix}poll_options`;
+DROP TABLE IF EXISTS `forum_poll_options`;
 
-CREATE TABLE `{prefix}poll_options` (
+CREATE TABLE `forum_poll_options` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`poll_id` INT(11) DEFAULT NULL,
 	`option` VARCHAR(100) NOT NULL,

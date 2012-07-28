@@ -119,7 +119,21 @@ class Topic extends ForumAppModel {
 		'content' => 'notEmpty'
 	);
 
-	/**
+    public function __construct($id = false, $table = null, $ds = null) {
+        parent::__construct($id, $table, $ds);
+        static $eventListenterAttached = false;
+
+        if(!$eventListenterAttached) {
+            //Connect the event manager of this model
+            App::import( 'Event', 'ForumEventListener');
+            $fel = new ForumEventListener();
+            CakeEventManager::instance()->attach($fel);
+            $eventListenterAttached = true;
+        }
+    }
+
+
+    /**
 	 * Validate and add a topic.
 	 *
 	 * @access public
@@ -450,6 +464,19 @@ class Topic extends ForumAppModel {
 		return true;
 	}
 
+    public function afterSave($created) {
+        parent::afterSave($created);
+
+        $event = new CakeEvent('Model.Forum.Topic.afterSave', $this, array('topic_id'=>$this->id, 'created'=>$created));
+        $this->getEventManager()->dispatch($event);
+    }
+
+    public function afterDelete() {
+        parent::afterDelete();
+
+        $event = new CakeEvent('Model.Forum.Topic.afterDelete', $this, array('topic_id'=>$this->id));
+        $this->getEventManager()->dispatch($event);
+    }
 	/**
 	 * After find.
 	 *
@@ -490,5 +517,90 @@ class Topic extends ForumAppModel {
 
 		return $results;
 	}
+
+    public function search( $query ) {
+        App::import('Vendor', 'Solr');
+        $solrObj = new Solr('forum');
+        $return = array('topics'=>array(), 'count'=>0); //Default
+
+        $query = $this->_solrDefaultQueryParams($query);
+        $results = $solrObj->query( $query, array('topic_id'), (($query['page']-1)*$query['limit']), $query['limit'] );
+        if(!$results || !isSet($results->response->numFound) || !$results->response->numFound) {
+            $return;
+        }
+
+
+        //Build conditions
+        $conditions = array();
+        if(isSet($results->response->docs) && $results->response->docs) {
+            foreach($results->response->docs AS $doc) {
+                if(!isSet($conditions['Topic.id'])) {
+                    $conditions['Topic.id'] = array();
+                }
+                $conditions['Topic.id'][] = $doc->topic_id;
+            }
+        }
+
+
+
+        if($conditions) {
+            $this->recursive = 0;
+            $this->unbindModel(array('belongsTo'=>array('FirstPost', 'LastUser'), 'hasOne'=>array('Pool'), 'hasMany'=>array('Post', 'Subscription')));
+            $return['topics'] = $this->find('all', array('conditions'=>$conditions));
+        }
+
+        if(isSet($results['response']['numFound'])) {
+            $return['count'] = $results['response']['numFound'];
+        } else {
+            $return['count'] = 0;
+        }
+
+        if(isSet($results['facet_counts']['facet_fields'])) {
+            $facetName = key($results['facet_counts']['facet_fields']);
+            $return['facet']['name'] = $facetName;
+            $return['facet']['results'] = (array) $results['facet_counts']['facet_fields'][$facetName];
+        }
+
+        return $return;
+    }
+
+    private function _solrDefaultQueryParams($query) {
+        if(isSet($query['fq']['forum_id'])) {
+            App::import('Model', 'Forum.Forum');
+            $forumObj = new Forum();
+            $hierarchy = $forumObj->getPathHierarchy($query['fq']['forum_id'], false);
+
+            $query['facet'] = array('field'=>'forums', 'mincount'=>1);
+            if($hierarchy) {
+                //$query['fq']['categories'] = $hierarchy; //Remove all subjects that not related to this category
+                $query['fq'][] = '{!raw f=forums}'.$hierarchy;
+
+
+                $hierarchy = explode(',', $hierarchy);
+                $hierarchy[0]++;
+                $query['facet']['prefix'] = implode(',', $hierarchy);
+            } else {
+                $query['facet']['prefix'] = '1,';
+            }
+
+            unset($query['fq']['forum_id']);
+
+
+            //$query['fq'][] = '{!raw f=forums}1,2';
+        }
+
+        if(isSet($query['search']) && !isSet($query['search_fields'])) {
+            $query['search_fields'] = array('title'=>5, 'content'=>0.4);
+        }
+
+        if(!isSet($query['page'])) {
+            $query['page'] = 1;
+        }
+        if(!isSet($query['limit'])) {
+            $query['limit'] = 12;
+        }
+
+        return $query;
+    }
 
 }

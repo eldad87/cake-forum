@@ -1,7 +1,7 @@
 
-DROP TABLE IF EXISTS `{prefix}access`;
+DROP TABLE IF EXISTS `forum_access`;
 
-CREATE TABLE `{prefix}access` (
+CREATE TABLE `forum_access` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`access_level_id` INT(11) DEFAULT NULL,
 	`user_id` INT(11) DEFAULT NULL,

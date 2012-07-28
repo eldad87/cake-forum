@@ -1,7 +1,7 @@
 
-DROP TABLE IF EXISTS `{prefix}subscriptions`;
+DROP TABLE IF EXISTS `forum_subscriptions`;
 
-CREATE TABLE `{prefix}subscriptions` (
+CREATE TABLE `forum_subscriptions` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`user_id` INT(11) DEFAULT NULL,
 	`forum_id` INT(11) DEFAULT NULL,

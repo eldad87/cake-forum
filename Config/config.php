@@ -13,11 +13,13 @@
  * for the username, email, status, etc fields, you can define their replacement here.
  */
 $config['Forum']['userMap'] = array(
-	'username'	=> 'username',
+	'username'	=> 'first_name',
+	'login'	    => 'email',
 	'password'	=> 'password',
 	'email'		=> 'email',
-	'status'	=> 'status'
+	'status'	=> 'active'
 );
+$config['Forum']['site_main_url'] = '/';
 
 /**
  * A map of status values for the users "status" column.
@@ -33,10 +35,10 @@ $config['Forum']['statusMap'] = array(
  * A map of external user management URLs.
  */
 $config['Forum']['routes'] = array(
-	'login' => array('plugin' => false, 'admin' => false, 'controller' => 'users', 'action' => 'login'),
-	'logout' => array('plugin' => false, 'admin' => false, 'controller' => 'users', 'action' => 'logout'),
-	'signup' => array('plugin' => false, 'admin' => false, 'controller' => 'users', 'action' => 'signup'),
-	'forgotPass' => array('plugin' => false, 'admin' => false, 'controller' => 'users', 'action' => 'forgot_password')
+	'login' => array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'login'),
+	'logout' => array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'logout'),
+	'signup' => array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'register'),
+	'forgotPass' => array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'forgotten_password')
 );
 
 /**

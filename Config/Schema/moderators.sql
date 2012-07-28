@@ -1,7 +1,7 @@
 
-DROP TABLE IF EXISTS `{prefix}moderators`;
+DROP TABLE IF EXISTS `forum_moderators`;
 
-CREATE TABLE `{prefix}moderators` (
+CREATE TABLE `forum_moderators` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`forum_id` INT(11) DEFAULT NULL,
 	`user_id` INT(11) DEFAULT NULL,

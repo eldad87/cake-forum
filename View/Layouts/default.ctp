@@ -21,7 +21,7 @@ echo $scripts_for_layout; ?>
 <body>
 	<div class="wrapper">
 		<?php echo $this->element('navigation'); ?>
-		
+
 		<div class="header">
 			<?php echo $this->element('search'); ?>
 			

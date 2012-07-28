@@ -1,7 +1,7 @@
 
-DROP TABLE IF EXISTS `{prefix}polls`;
+DROP TABLE IF EXISTS `forum_polls`;
 
-CREATE TABLE `{prefix}polls` (
+CREATE TABLE `forum_polls` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`topic_id` INT(11) DEFAULT NULL,
 	`created` DATETIME DEFAULT NULL,

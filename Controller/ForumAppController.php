@@ -30,7 +30,7 @@ class ForumAppController extends AppController {
 	 * @access public
 	 * @var array
 	 */
-	public $components = array('Session', 'Security', 'Cookie', 'Auth', 'Forum.ForumToolbar', 'Forum.AutoLogin');
+	public $components = array('Session', 'Security', 'Cookie', 'Auth', 'Forum.ForumToolbar'/*, 'Forum.AutoLogin'*/);
 
 	/**
 	 * Helpers.
@@ -47,11 +47,11 @@ class ForumAppController extends AppController {
 	 * @param array $user
 	 * @return void
 	 */
-	public function _autoLogin($user) {
-		ClassRegistry::init('Forum.Profile')->login($user['User']['id']);
+	/*public function _autoLogin($user) {
+		ClassRegistry::init('Forum.Profile')->login($user['User']['user_id']);
 
 		$this->Session->delete('Forum');
-	}
+	}*/
 
 	/**
 	 * Before filter.
@@ -73,21 +73,21 @@ class ForumAppController extends AppController {
 		Configure::write('Config.language', $locale);
 		setlocale(LC_ALL, $locale .'UTF8', $locale .'UTF-8', $locale, 'eng.UTF8', 'eng.UTF-8', 'eng', 'en_US');
 
-		// Authorization
-		$referer = $this->referer();
-		$routes = $this->config['routes'];
+        /*// Authorization
+          $referer = $this->referer();
+          $routes = $this->config['routes'];
 
-		if (empty($referer) || $referer == '/forum/users/login' || $referer == '/admin/forum/users/login') {
-			$referer = array('plugin' => 'forum', 'controller' => 'forum', 'action' => 'index');
-		}
+          if (empty($referer) || $referer == '/forum/users/login' || $referer == '/admin/forum/users/login') {
+              $referer = array('plugin' => 'forum', 'controller' => 'forum', 'action' => 'index');
+          }
 
-		$this->Auth->loginAction = $routes['login'];
-		$this->Auth->loginRedirect = $referer;
-		$this->Auth->logoutRedirect = $referer;
-		$this->Auth->autoRedirect = false;
+          $this->Auth->loginAction = $routes['login'];
+          $this->Auth->autoRedirect = false;
+          $this->Auth->loginRedirect = $referer;
+          $this->Auth->logoutRedirect = $referer;*/
 
 		// AutoLogin
-		$this->AutoLogin->settings = array(
+		/*$this->AutoLogin->settings = array(
 			'model' => 'User',
 			'username' => $this->config['userMap']['username'],
 			'password' => $this->config['userMap']['password'],
@@ -95,7 +95,7 @@ class ForumAppController extends AppController {
 			'controller' => $routes['login']['controller'],
 			'loginAction' => $routes['login']['action'],
 			'logoutAction' => $routes['logout']['action']
-		);
+		);*/
 
 		// Initialize
 		$this->ForumToolbar->initForum();

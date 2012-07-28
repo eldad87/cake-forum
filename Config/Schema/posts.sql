@@ -1,7 +1,7 @@
 
-DROP TABLE IF EXISTS `{prefix}posts`;
+DROP TABLE IF EXISTS `forum_posts`;
 
-CREATE TABLE `{prefix}posts` (
+CREATE TABLE `forum_posts` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`forum_id` INT(11) DEFAULT NULL,
 	`topic_id` INT(11) DEFAULT NULL,

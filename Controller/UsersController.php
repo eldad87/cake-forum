@@ -34,7 +34,7 @@ class UsersController extends ForumAppController {
 	 * @access public
 	 * @var array
 	 */
-	public $helpers = array('Utils.Gravatar');
+	public $helpers = array('Time', 'Utils.Gravatar');
 
 	/**
 	 * Pagination.
@@ -53,6 +53,8 @@ class UsersController extends ForumAppController {
 	 * List of users.
 	 */
 	public function index() {
+        //var_dump($this->helpers); die;
+        //echo 1; die;
 		$this->paginate['Profile']['conditions']['User.' . $this->config['userMap']['status']] = $this->config['statusMap']['active'];
 
 		if (!empty($this->params['named']['username'])) {
@@ -62,8 +64,11 @@ class UsersController extends ForumAppController {
 
 		$this->paginate['Profile']['order'] = array('User.'. $this->config['userMap']['username'] => 'ASC');
 
+
+
 		$this->ForumToolbar->pageTitle(__d('forum', 'User List'));
 		$this->set('users', $this->paginate('Profile'));
+
 	}
 
 	/**
@@ -88,7 +93,7 @@ class UsersController extends ForumAppController {
 		$this->loadModel('Forum.Topic');
 		$this->loadModel('Forum.Subscription');
 
-		$user_id = $this->Auth->user('id');
+		$user_id = $this->Auth->user('user_id');
 
 		$this->ForumToolbar->pageTitle(__d('forum', 'Dashboard'));
 		$this->set('topics', $this->Topic->getLatestByUser($user_id));
@@ -100,7 +105,7 @@ class UsersController extends ForumAppController {
 	 * Edit a forum profile.
 	 */
 	public function edit() {
-		$user_id = $this->Auth->user('id');
+		$user_id = $this->Auth->user('user_id');
 		$profile = $this->Profile->getUserProfile($user_id);
 
 		if (!empty($this->request->data)) {
@@ -153,7 +158,7 @@ class UsersController extends ForumAppController {
 		$this->loadModel('Forum.Report');
 
 		if (!empty($this->request->data)) {
-			$this->request->data['Report']['user_id'] = $this->Auth->user('id');
+			$this->request->data['Report']['user_id'] = $this->Auth->user('user_id');
 			$this->request->data['Report']['item_id'] = $user_id;
 			$this->request->data['Report']['itemType'] = Report::USER;
 

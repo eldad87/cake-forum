@@ -1,7 +1,7 @@
 
-DROP TABLE IF EXISTS `{prefix}profiles`;
+DROP TABLE IF EXISTS `forum_profiles`;
 
-CREATE TABLE `{prefix}profiles` (
+CREATE TABLE `forum_profiles` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`user_id` INT(11) DEFAULT NULL,
 	`signature` VARCHAR(255) NOT NULL,

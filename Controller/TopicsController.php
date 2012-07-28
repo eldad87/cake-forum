@@ -69,7 +69,7 @@ class TopicsController extends ForumAppController {
 	 */
 	public function add($slug, $type = '') {
 		$forum = $this->Topic->Forum->get($slug);
-		$user_id = $this->Auth->user('id');
+		$user_id = $this->Auth->user('user_id');
 
 		if ($type == 'poll') {
 			$pageTitle = __d('forum', 'Create Poll');
@@ -117,7 +117,7 @@ class TopicsController extends ForumAppController {
 	 */
 	public function edit($slug) {
 		$topic = $this->Topic->get($slug);
-		$user_id = $this->Auth->user('id');
+		$user_id = $this->Auth->user('user_id');
 
 		$this->ForumToolbar->verifyAccess(array(
 			'exists' => $topic,
@@ -197,7 +197,7 @@ class TopicsController extends ForumAppController {
 		$this->loadModel('Forum.Report');
 
 		$topic = $this->Topic->get($slug);
-		$user_id = $this->Auth->user('id');
+		$user_id = $this->Auth->user('user_id');
 
 		$this->ForumToolbar->verifyAccess(array(
 			'exists' => $topic
@@ -225,7 +225,7 @@ class TopicsController extends ForumAppController {
 	 */
 	public function view($slug) {
 		$topic = $this->Topic->get($slug);
-		$user_id = $this->Auth->user('id');
+		$user_id = $this->Auth->user('user_id');
 
 		$this->ForumToolbar->verifyAccess(array(
 			'exists' => $topic,
@@ -259,7 +259,7 @@ class TopicsController extends ForumAppController {
 		$success = false;
 		$data = __d('forum', 'Failed To Subscribe');
 
-		if ($this->settings['enable_topic_subscriptions'] && $this->Subscription->subscribeToTopic($this->Auth->user('id'), $id)) {
+		if ($this->settings['enable_topic_subscriptions'] && $this->Subscription->subscribeToTopic($this->Auth->user('user_id'), $id)) {
 			$success = true;
 			$data = __d('forum', 'Subscribed');
 		}
@@ -297,7 +297,7 @@ class TopicsController extends ForumAppController {
 	 */
 	public function moderate($slug) {
 		$topic = $this->Topic->get($slug);
-		$user_id = $this->Auth->user('id');
+		$user_id = $this->Auth->user('user_id');
 
 		$this->ForumToolbar->verifyAccess(array(
 			'exists' => $topic,

@@ -43,7 +43,21 @@ class Post extends ForumAppModel {
 		'content' => 'notEmpty'
 	);
 
-	/**
+    public function __construct($id = false, $table = null, $ds = null) {
+        parent::__construct($id, $table, $ds);
+        static $eventListenterAttached = false;
+
+        if(!$eventListenterAttached) {
+            //Connect the event manager of this model
+            App::import( 'Event', 'ForumEventListener');
+            $fel = new ForumEventListener();
+            CakeEventManager::instance()->attach($fel);
+            $eventListenterAttached = true;
+        }
+    }
+
+
+    /**
 	 * Validate and add a post.
 	 *
 	 * @access public
@@ -270,6 +284,13 @@ class Post extends ForumAppModel {
 		}
 
 		return true;
-	}
+    }
 
+
+    public function afterSave($created) {
+        parent::afterSave($created);
+
+        $event = new CakeEvent('Model.Forum.Post.afterSave', $this, array('post_id'=>$this->id, 'created'=>$created));
+        $this->getEventManager()->dispatch($event);
+    }
 }

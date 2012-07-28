@@ -5,7 +5,7 @@ $this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'act
 $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->here); ?>
 
 <div class="title">
-	<?php echo $this->Html->link(__d('forum', 'Report User'), array('action' => 'report', $profile['User']['id']), array('class' => 'button float-right')); ?>
+	<?php echo $this->Html->link(__d('forum', 'Report User'), array('action' => 'report', $profile['User']['user_id']), array('class' => 'button float-right')); ?>
 	<h2><?php echo $profile['User'][$config['userMap']['username']]; ?></h2>
 </div>
 
@@ -133,7 +133,7 @@ if (!empty($posts)) { ?>
 
 				<tr class="altRow">
 					<td><strong><?php echo $this->Html->link($post['Topic']['title'], array('controller' => 'topics', 'action' => 'view', $post['Topic']['slug'])); ?></strong></td>
-					<td><?php echo $this->Html->link($post['Topic']['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $post['Topic']['User']['id'])); ?></td>
+					<td><?php echo $this->Html->link($post['Topic']['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $post['Topic']['User']['user_id'])); ?></td>
 					<td class="ar"><?php echo $this->Time->timeAgoInWords($post['Post']['created'], array('userOffset' => $this->Common->timezone())); ?></td>
 				</tr>
 				<tr>

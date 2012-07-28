@@ -27,7 +27,7 @@ $columns = isset($columns) ? $columns : array(); ?>
 		<td class="status"><?php echo $this->Common->options('topicStatus', $topic['Topic']['status']); ?></td>
 	<?php } ?>
 	<td class="author">
-		<?php echo $this->Html->link($topic['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $topic['User']['id'])); ?>
+		<?php echo $this->Html->link($topic['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $topic['User']['user_id'])); ?>
 	</td>
 	<td class="created">
 		<?php echo $this->Time->niceShort($topic['Topic']['created'], $this->Common->timezone()); ?>

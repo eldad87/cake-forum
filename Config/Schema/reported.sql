@@ -1,7 +1,7 @@
 
-DROP TABLE IF EXISTS `{prefix}reported`;
+DROP TABLE IF EXISTS `forum_reported`;
 
-CREATE TABLE `{prefix}reported` (
+CREATE TABLE `forum_reported` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`item_id` INT(11) DEFAULT NULL,
 	`itemType` SMALLINT(6) NOT NULL,

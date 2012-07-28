@@ -19,12 +19,14 @@ $this->Html->addCrumb(__d('forum', 'Search'), array('controller' => 'search', 'a
 
 					<td class="align-right"><?php echo $this->Form->label('forum_id', __d('forum', 'Within Forum Category') .':'); ?></td>
 					<td><?php echo $this->Form->input('forum_id', array('div' => false, 'label' => false, 'options' => $forums, 'escape' => false, 'empty' => true)); ?></td>
-
+<?php /*
 					<td class="align-right"><?php echo $this->Form->label('orderBy', __d('forum', 'Order By') .':'); ?></td>
 					<td><?php echo $this->Form->input('orderBy', array('div' => false, 'label' => false, 'options' => $orderBy)); ?></td>
 
 					<td class="align-right"><?php echo $this->Form->label('byUser', __d('forum', 'By User (Username)') .':'); ?></td>
 					<td><?php echo $this->Form->input('byUser', array('div' => false, 'label' => false, 'style' => 'width: 150px')); ?></td>
+*/
+?>
 				</tr>
 			</tbody>
 		</table>
@@ -44,13 +46,13 @@ if ($searching) { ?>
 		<table class="table topics">
 			<thead>
 				<tr>
-					<th colspan="2"><?php echo $this->Paginator->sort('Topic.title', __d('forum', 'Topic')); ?></th>
-					<th><?php echo $this->Paginator->sort('Topic.forum_id', __d('forum', 'Forum')); ?></th>
-					<th><?php echo $this->Paginator->sort('User.' . $config['userMap']['username'], __d('forum', 'Author')); ?></th>
-					<th><?php echo $this->Paginator->sort('Topic.created', __d('forum', 'Created')); ?></th>
-					<th><?php echo $this->Paginator->sort('Topic.post_count', __d('forum', 'Posts')); ?></th>
-					<th><?php echo $this->Paginator->sort('Topic.view_count', __d('forum', 'Views')); ?></th>
-					<th><?php echo $this->Paginator->sort('LastPost.created', __d('forum', 'Activity')); ?></th>
+					<th colspan="2"><?php /*echo $this->Paginator->sort('Topic.title', __d('forum', 'Topic')); */echo __d('forum', 'Topic');?></th>
+					<th><?php /*echo $this->Paginator->sort('Topic.forum_id', __d('forum', 'Forum'));*/ echo __d('forum', 'Forum'); ?></th>
+					<th><?php /*echo $this->Paginator->sort('User.' . $config['userMap']['username'], __d('forum', 'Author'));*/ echo __d('forum', 'Author'); ?></th>
+					<th><?php /*echo $this->Paginator->sort('Topic.created', __d('forum', 'Created'));*/ echo __d('forum', 'Created'); ?></th>
+					<th><?php /*echo $this->Paginator->sort('Topic.post_count', __d('forum', 'Posts'));*/ echo __d('forum', 'Posts'); ?></th>
+					<th><?php /*echo $this->Paginator->sort('Topic.view_count', __d('forum', 'Views'));*/ echo __d('forum', 'Views'); ?></th>
+					<th><?php /*echo $this->Paginator->sort('LastPost.created', __d('forum', 'Activity'));*/ echo __d('forum', 'Activity'); ?></th>
 				</tr>
 			</thead>
 			<tbody>

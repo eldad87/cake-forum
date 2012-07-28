@@ -1,7 +1,7 @@
 
-DROP TABLE IF EXISTS `{prefix}settings`;
+DROP TABLE IF EXISTS `forum_settings`;
 
-CREATE TABLE `{prefix}settings` (
+CREATE TABLE `forum_settings` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`key` VARCHAR(50) NOT NULL,
 	`value` VARCHAR(100) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE `{prefix}settings` (
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Forum settings' AUTO_INCREMENT=1;
 
-INSERT INTO `{prefix}settings` (`id`, `key`, `value`, `modified`) VALUES
+INSERT INTO `forum_settings` (`id`, `key`, `value`, `modified`) VALUES
 	(NULL, 'site_name', 'CakePHP Forum Plugin', NOW()),
 	(NULL, 'site_email', 'noreply@example.com', NOW()),
 	(NULL, 'site_main_url', 'http://example.com', NOW()),

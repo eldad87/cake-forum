@@ -110,6 +110,39 @@ class Forum extends ForumAppModel {
 		)
 	);
 
+
+    public function beforeSave($options=array()) {
+        parent::beforeSave($options);
+
+
+        //Prepare path/deep/parent_subject_category_id
+        if( !isSet($this->data['Forum']['forum_id']) ) {
+            if(!$this->id) {
+                //Create new record, no parent id so set default
+                $this->data['Forum']['deep'] = 1;
+                $this->data['Forum']['path'] = null;
+                $this->data['Forum']['forum_id'] = 0;
+            }
+        } else if(!$this->data['Forum']['forum_id']) {
+            //if($this->id) - user change parent, else its a new main category
+            $this->data['Forum']['deep'] = 1;
+            $this->data['Forum']['path'] = null;
+            $this->data['Forum']['forum_id'] = 0;
+        } else {
+            $parentData = $this->findById($this->data['Forum']['forum_id']);
+            $parentData = $parentData['Forum'];
+
+            $this->data['Forum']['deep'] = $parentData['deep']+1;
+
+            $parentPath = $parentData['path'] ? explode(',', $parentData['path']) : array();
+            $parentPath[] = $parentData['id'];
+            $this->data['Forum']['path'] = implode(',', $parentPath);
+        }
+
+
+        return true;
+    }
+
 	/**
 	 * Update all forums by going up the parent chain.
 	 *
@@ -283,6 +316,46 @@ class Forum extends ForumAppModel {
 
 		return $hierarchy;
 	}
+
+    public function getPathHierarchy($forumId, $fullPath=true) {
+
+        $this->recursive = -1;
+        $data = $this->findById($forumId);
+        if(!$data) {
+            return array();
+        }
+        $data = $data['Forum'];
+
+
+        if($fullPath) {
+            $return = array();
+
+            for($deep=1; $deep<=$data['deep']; $deep++) {
+                $hierarchy = $deep;
+                if($data['path']) {
+                    $path = explode(',', $data['path']);
+                    $path = array_slice($path, 0, $deep);
+                    $hierarchy .= ','.implode(',', $path);
+                }
+                if($deep==$data['deep']) {
+                    $hierarchy .= ','.$forumId;
+                }
+
+                $return[] = $hierarchy;
+            }
+            return $return;
+        } else {
+            $hierarchy = $data['deep']; //In order to get all children
+            if($data['path']) {
+                $hierarchy .= ','.$data['path'];
+            }
+            $hierarchy .= ','.$forumId;
+
+            return $hierarchy;
+        }
+
+
+    }
 
 	/**
 	 * Get the list of forums for the board index.

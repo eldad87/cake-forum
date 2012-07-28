@@ -49,7 +49,7 @@ $this->Html->addCrumb($topic['Topic']['title'], array('controller' => 'topics', 
 						<?php } ?>
 					</td>
 					<td>
-						<?php echo $this->Html->link($post['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $post['User']['id'])); ?>
+						<?php echo $this->Html->link($post['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $post['User']['user_id'])); ?>
 					</td>
 					<td>
 						<?php echo str_replace("\n", '', $this->Text->truncate($post['Post']['content'], 100)); ?>

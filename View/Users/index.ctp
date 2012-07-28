@@ -33,7 +33,7 @@ $this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'act
 			foreach ($users as $counter => $profile) { ?>
 
 			<tr<?php if ($counter % 2) echo ' class="altRow"'; ?>>
-				<td><?php echo $this->Html->link($profile['User'][$config['userMap']['username']], array('action' => 'profile', $profile['User']['id'])); ?></td>
+				<td><?php echo $this->Html->link($profile['User'][$config['userMap']['username']], array('action' => 'profile', $profile['User']['user_id'])); ?></td>
 				<td class="created"><?php echo $this->Time->nice($profile['Profile']['created'], $this->Common->timezone()); ?></td>
 				<td class="created">
 					<?php if (!empty($profile['Profile']['lastLogin'])) {
