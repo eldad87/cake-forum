@@ -39,7 +39,7 @@ class ForumToolbarComponent extends Component {
 	 * @return void
 	 */
 	public function initForum() {
-		$user_id = $this->Controller->Auth->user('user_id');
+		$user_id = $this->Controller->Auth->user('id');
 
 		if (!$this->Session->check('Forum.isBrowsing')) {
 			$isSuper = false;
@@ -50,7 +50,7 @@ class ForumToolbarComponent extends Component {
 			$moderates = array();
 			$lastVisit = date('Y-m-d H:i:s');
 
-			if ($user_id && intval($this->Controller->Auth->user($this->config['userMap']['status'])) != intval($this->config['statusMap']['banned'])) {
+			if ($user_id && $this->Controller->Auth->user($this->config['userMap']['status']) != $this->config['statusMap']['banned']) {
 				$access = ClassRegistry::init('Forum.Access')->getListByUser($user_id);
 				$highestAccess = 1;
 
@@ -72,14 +72,11 @@ class ForumToolbarComponent extends Component {
 					}
 				}
 
-
-
 				$moderates = ClassRegistry::init('Forum.Moderator')->getModerations($user_id);
 				$profile = ClassRegistry::init('Forum.Profile')->getUserProfile($user_id);
 				$profile = $profile['Profile'];
 				$lastVisit = $profile['lastLogin'];
 			}
-
 
 			$this->Session->write('Forum.profile', $profile);
 			$this->Session->write('Forum.access', $highestAccess);
@@ -231,7 +228,7 @@ class ForumToolbarComponent extends Component {
 	 * @return boolean
 	 */
 	public function verifyAccess($validators = array()) {
-		$user_id = $this->Controller->Auth->user('user_id');
+		$user_id = $this->Controller->Auth->user('id');
 
 		if (!$user_id) {
 			return false;
@@ -284,7 +281,7 @@ class ForumToolbarComponent extends Component {
 	 * @return boolean
 	 */
 	public function verifyAdmin() {
-		$user_id = $this->Controller->Auth->user('user_id');
+		$user_id = $this->Controller->Auth->user('id');
 
 		if ($user_id) {
 			if ($this->Session->read('Forum.isAdmin')) {

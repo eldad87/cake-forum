@@ -35,7 +35,7 @@ $this->Html->addCrumb(__d('forum', 'Dashboard'), $this->here); ?>
 				<tr<?php if ($counter % 2) echo ' class="altRow"'; ?>>
 					<td><?php echo $this->Html->link($topic['Topic']['title'], array('controller' => 'topics', 'action' => 'view', $topic['Topic']['slug'])); ?></td>
 					<td class="author">
-						<?php echo $this->Html->link($topic['Topic']['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $topic['Topic']['User']['user_id'])); ?>
+						<?php echo $this->Html->link($topic['Topic']['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $topic['Topic']['User']['id'])); ?>
 					</td>
 					<td class="stat"><?php echo number_format($topic['Topic']['post_count']); ?></td>
 					<td class="stat"><?php echo number_format($topic['Topic']['view_count']); ?></td>
@@ -84,7 +84,7 @@ if (!empty($activity)) { ?>
 				<tr<?php if ($counter % 2) echo ' class="altRow"'; ?>>
 					<td><?php echo $this->Html->link($topic['Topic']['title'], array('controller' => 'topics', 'action' => 'view', $topic['Topic']['slug'])); ?></td>
 					<td class="author">
-						<?php echo $this->Html->link($topic['Topic']['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $topic['Topic']['User']['user_id'])); ?>
+						<?php echo $this->Html->link($topic['Topic']['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $topic['Topic']['User']['id'])); ?>
 					</td>
 					<td class="stat"><?php echo number_format($topic['Topic']['post_count']); ?></td>
 					<td class="stat"><?php echo number_format($topic['Topic']['view_count']); ?></td>

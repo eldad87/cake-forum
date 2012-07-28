@@ -37,9 +37,9 @@ $this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'reports', 'a
 				foreach ($reports as $counter => $report) { ?>
 
 				<tr<?php if ($counter % 2) echo ' class="altRow"'; ?>>
-					<td class="icon"><input type="checkbox" name="data[Report][items][]" value="<?php echo $report['Report']['id']; ?>:<?php echo $report['User']['user_id']; ?>" /></td>
+					<td class="icon"><input type="checkbox" name="data[Report][items][]" value="<?php echo $report['Report']['id']; ?>:<?php echo $report['User']['id']; ?>" /></td>
 					<td>
-						<?php if (!empty($report['User']['user_id'])) {
+						<?php if (!empty($report['User']['id'])) {
 							echo $this->Html->link($report['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'edit', $report['User']['Profile']['id'], 'admin' => true));
 						} else {
 							echo '<em class="gray">('. __d('forum', 'Deleted') .')</em>';

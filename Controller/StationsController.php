@@ -59,7 +59,7 @@ class StationsController extends ForumAppController {
 	 */
 	public function view($slug) {
 		$forum = $this->Forum->get($slug);
-		$user_id = $this->Auth->user('user_id');
+		$user_id = $this->Auth->user('id');
 
 		$this->ForumToolbar->verifyAccess(array(
 			'exists' => $forum,
@@ -170,7 +170,7 @@ class StationsController extends ForumAppController {
 		$success = false;
 		$data = __d('forum', 'Failed To Subscribe');
 
-		if ($this->settings['enable_forum_subscriptions'] && $this->Subscription->subscribeToForum($this->Auth->user('user_id'), $id)) {
+		if ($this->settings['enable_forum_subscriptions'] && $this->Subscription->subscribeToForum($this->Auth->user('id'), $id)) {
 			$success = true;
 			$data = __d('forum', 'Subscribed');
 		}

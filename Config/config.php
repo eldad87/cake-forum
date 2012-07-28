@@ -13,7 +13,7 @@
  * for the username, email, status, etc fields, you can define their replacement here.
  */
 $config['Forum']['userMap'] = array(
-	'username'	=> 'first_name',
+	'username'	=> 'username',
 	'login'	    => 'email',
 	'password'	=> 'password',
 	'email'		=> 'email',

@@ -6,9 +6,9 @@ $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->h
 
 <div class="controls float-right">
 	<?php if ($profile['User'][$config['userMap']['status']] != $config['statusMap']['active']) {
-		echo $this->Html->link(__d('forum', 'Activate'), array('action' => 'status', $profile['User']['user_id'], 'active'), array('class' => 'button'));
+		echo $this->Html->link(__d('forum', 'Activate'), array('action' => 'status', $profile['User']['id'], 'active'), array('class' => 'button'));
 	} else {
-		echo $this->Html->link(__d('forum', 'Ban'), array('action' => 'status', $profile['User']['user_id'], 'banned'), array('class' => 'button'));
+		echo $this->Html->link(__d('forum', 'Ban'), array('action' => 'status', $profile['User']['id'], 'banned'), array('class' => 'button'));
 	} ?>
 </div>
 

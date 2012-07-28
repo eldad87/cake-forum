@@ -112,7 +112,7 @@ if (!empty($topic['Poll']['id'])) { ?>
 							$links = array();
 
 							if ($topic['Topic']['firstPost_id'] == $post['Post']['id']) {
-								if ($this->Common->hasAccess(AccessLevel::SUPER, $topic['Forum']['id']) || ($topic['Topic']['status'] && $user['User']['user_id'] == $post['Post']['user_id'])) {
+								if ($this->Common->hasAccess(AccessLevel::SUPER, $topic['Forum']['id']) || ($topic['Topic']['status'] && $user['User']['id'] == $post['Post']['user_id'])) {
 									$links[] = $this->Html->link(__d('forum', 'Edit Topic'), array('controller' => 'topics', 'action' => 'edit', $topic['Topic']['slug']));
 								}
 
@@ -122,7 +122,7 @@ if (!empty($topic['Poll']['id'])) { ?>
 
 								$links[] = $this->Html->link(__d('forum', 'Report Topic'), array('controller' => 'topics', 'action' => 'report', $topic['Topic']['slug']));
 							} else {
-								if ($user['User']['user_id'] == $post['Post']['user_id']) {
+								if ($user['User']['id'] == $post['Post']['user_id']) {
 									$links[] = $this->Html->link(__d('forum', 'Edit Post'), array('controller' => 'posts', 'action' => 'edit', $post['Post']['id']));
 									$links[] = $this->Html->link(__d('forum', 'Delete Post'), array('controller' => 'posts', 'action' => 'delete', $post['Post']['id']), array('confirm' => __d('forum', 'Are you sure you want to delete?')));
 								}
@@ -142,7 +142,7 @@ if (!empty($topic['Poll']['id'])) { ?>
 				</tr>
 				<tr>
 					<td valign="top" style="width: 25%">
-						<h4 class="username"><?php echo $this->Html->link($post['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $post['User']['user_id'])); ?></h4>
+						<h4 class="username"><?php echo $this->Html->link($post['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $post['User']['id'])); ?></h4>
 
 						<?php if (!empty($post['User']['Access'])) { ?>
 							<strong><?php echo $this->Common->highestAccessLevel($post['User']['Access']); ?></strong><br />
