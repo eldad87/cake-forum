@@ -35,10 +35,10 @@ $config['Forum']['statusMap'] = array(
  * A map of external user management URLs.
  */
 $config['Forum']['routes'] = array(
-	'login' => array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'login'),
-	'logout' => array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'logout'),
-	'signup' => array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'register'),
-	'forgotPass' => array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'forgotten_password')
+	'login' => '/login',//array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'login'),
+	'logout' => '/logout',//array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'logout'),
+	'signup' => '/register',//array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'register'),
+	'forgotPass' => '/forgotten_password',//array('plugin' => false, 'admin' => false, 'controller' => 'Users', 'action' => 'forgotten_password')
 );
 
 /**

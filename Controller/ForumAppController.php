@@ -48,7 +48,7 @@ class ForumAppController extends AppController {
 	 * @return void
 	 */
 	/*public function _autoLogin($user) {
-		ClassRegistry::init('Forum.Profile')->login($user['User']['user_id']);
+		ClassRegistry::init('Forum.Profile')->login($user['User']['id']);
 
 		$this->Session->delete('Forum');
 	}*/

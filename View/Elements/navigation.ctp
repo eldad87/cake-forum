@@ -34,7 +34,7 @@
 	if ($user) { ?>
 
 		<div>
-			<?php echo sprintf(__d('forum', 'Welcome %s'), $this->Html->link($user['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $user['User']['user_id'], 'admin' => false))); ?>
+			<?php echo sprintf(__d('forum', 'Welcome %s'), $this->Html->link($user['User'][$config['userMap']['username']], array('controller' => 'users', 'action' => 'profile', $user['User']['id'], 'admin' => false))); ?>
 		</div>
 
 	<?php } ?>

@@ -47,7 +47,7 @@ class SearchController extends ForumAppController {
 	 *
 	 * @param string $type
 	 */
-	public function index($type = '') {
+	public function index(/*$type = ''*/) {
 		$searching = false;
 		$forums = $this->Topic->Forum->getGroupedHierarchy('accessRead');
 		$orderBy = array(
@@ -71,6 +71,9 @@ class SearchController extends ForumAppController {
         $tObj->find('all');*/
 
         $query = $this->_searchDefaultQueryParams();
+        /*if ($type == 'new_posts') {
+            $query['fq']['last_modified']= '['.$this->Session->read('Forum.lastVisit').' TO *]';
+        }*/
         $topicsData = array('topics'=>array(), 'count'=>null); //Default
         if (!empty($this->request->data)) {
             $searching = true;
