@@ -24,7 +24,7 @@ $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->h
 				<?php } ?>
 
 				<td><strong><?php echo __d('forum', 'Joined'); ?>:</strong></td>
-				<td><?php echo $this->Time->nice($profile['Profile']['created'], $this->Common->timezone()); ?></td>
+				<td><?php echo $this->Time->nice($profile['User']['created'], $this->Common->timezone()); ?></td>
 
 				<td><strong><?php echo __d('forum', 'Total Topics'); ?>:</strong></td>
 				<td><?php echo number_format($profile['Profile']['totalTopics']); ?></td>
@@ -45,8 +45,8 @@ $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->h
 			<tr>
 				<td><strong><?php echo __d('forum', 'Last Login'); ?>:</strong></td>
 				<td>
-					<?php if (!empty($profile['Profile']['lastLogin'])) {
-						echo $this->Time->timeAgoInWords($profile['Profile']['lastLogin'], array('userOffset' => $this->Common->timezone()));
+					<?php if (!empty($profile['User']['lastLogin'])) {
+						echo $this->Time->timeAgoInWords($profile['User']['lastLogin'], array('userOffset' => $this->Common->timezone()));
 					} else {
 						echo '<em>'. __d('forum', 'Never') .'</em>';
 					} ?>

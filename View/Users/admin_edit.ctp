@@ -28,8 +28,8 @@ $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->h
 		echo $this->Form->input('User.' . $config['userMap']['status'], array('label' => __d('forum', 'Status'), 'readonly' => true));
 		echo $this->Form->input('totalPosts', array('label' => __d('forum', 'Total Posts'), 'class' => 'numeric'));
 		echo $this->Form->input('totalTopics', array('label' => __d('forum', 'Total Topics'), 'class' => 'numeric'));
-		echo $this->Form->input('locale', array('options' => $config['locales'], 'label' => __d('forum', 'Language')));
-		echo $this->Form->input('timezone', array('options' => $config['timezones'], 'label' => __d('forum', 'Timezone')));
+		echo $this->Form->input('User.locale', array('options' => $config['locales'], 'label' => __d('forum', 'Language')));
+		echo $this->Form->input('User.timezone', array('options' => $config['timezones'], 'label' => __d('forum', 'Timezone')));
 		echo $this->Form->input('signature', array('type' => 'textarea', 'label' => __d('forum', 'Signature'))); ?>
 	</div>
 </div>

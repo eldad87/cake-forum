@@ -75,6 +75,12 @@ class ForumToolbarComponent extends Component {
 				$moderates = ClassRegistry::init('Forum.Moderator')->getModerations($user_id);
 				$profile = ClassRegistry::init('Forum.Profile')->getUserProfile($user_id);
 				$profile = $profile['Profile'];
+
+                $profile['locale']      = $this->Controller->Auth->user('locale');
+                $profile['timezone']    = $this->Controller->Auth->user('timezone');
+                $profile['currentLogin']= $this->Controller->Auth->user('currentLogin');
+                $profile['lastLogin']   = $this->Controller->Auth->user('lastLogin');
+
 				$lastVisit = $profile['lastLogin'];
 			}
 

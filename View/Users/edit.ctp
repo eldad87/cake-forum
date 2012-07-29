@@ -15,8 +15,8 @@ $this->Html->addCrumb(__d('forum', 'Edit Profile'), array('controller' => 'users
 <div class="container">
 	<div class="containerContent">
 		<?php 
-		echo $this->Form->input('locale', array('options' => $config['locales'], 'label' => __d('forum', 'Language')));
-		echo $this->Form->input('timezone', array('options' => $config['timezones'], 'label' => __d('forum', 'Timezone')));
+		echo $this->Form->input('User.locale', array('options' => $config['locales'], 'label' => __d('forum', 'Language')));
+		echo $this->Form->input('User.timezone', array('options' => $config['timezones'], 'label' => __d('forum', 'Timezone')));
 		echo $this->Form->input('signature', array('type' => 'textarea', 'rows' => 5, 'label' => __d('forum', 'Signature')));
 		echo $this->element('markitup', array('textarea' => 'ProfileSignature')); ?>
 	</div>

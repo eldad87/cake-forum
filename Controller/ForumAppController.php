@@ -30,7 +30,7 @@ class ForumAppController extends AppController {
 	 * @access public
 	 * @var array
 	 */
-	public $components = array('Session', 'Security', 'Cookie', 'Auth', 'Forum.ForumToolbar'/*, 'Forum.AutoLogin'*/);
+	public $components = array('Session', 'Security', 'Cookie', 'Auth'=>array('loginAction'=>array('controller'=>'Accounts','action'=>'login')), 'Forum.ForumToolbar'/*, 'Forum.AutoLogin'*/);
 
 	/**
 	 * Helpers.

@@ -104,9 +104,10 @@ class UsersController extends ForumAppController {
 		$profile = $this->Profile->getUserProfile($user_id);
 
 		if (!empty($this->request->data)) {
-			$this->Profile->id = $profile['Profile']['id'];
-
-			if ($this->Profile->save($this->request->data, true)) {
+            $this->request->data['Profile']['id'] = $profile['Profile']['id'];
+            $this->request->data['User']['user_id'] = $user_id;
+			if ($this->Profile->User->saveAll($this->request->data, true)) {
+                $this->Session->delete('Forum'); //So the config will update
 				$this->Session->setFlash(__d('forum', 'Your profile information has been updated!'));
 			}
 		} else {

@@ -94,7 +94,7 @@ class Profile extends ForumAppModel {
 	 */
 	public function getLatest($limit = 10) {
 		return $this->find('all', array(
-			'order' => array('Profile.created' => 'DESC'),
+			'order' => array('User.created' => 'DESC'),
 			'contain' => array('User'),
 			'limit' => $limit
 		));
@@ -108,7 +108,7 @@ class Profile extends ForumAppModel {
 	 */
 	public function getNewestUser() {
 		return $this->find('first', array(
-			'order' => array('Profile.created' => 'DESC'),
+			'order' => array('User.created' => 'DESC'),
 			'contain' => array('User'),
 			'limit' => 1
 		));
@@ -169,7 +169,7 @@ class Profile extends ForumAppModel {
 	 * @param int $user_id
 	 * @return boolean
 	 */
-	public function login($user_id) {
+	/*public function login($user_id) {
 		if ($profile = $this->getUserProfile($user_id)) {
 			$this->id = $profile['Profile']['id'];
 
@@ -178,7 +178,7 @@ class Profile extends ForumAppModel {
 				'lastLogin' => $profile['Profile']['currentLogin']
 			), false);
 		}
-	}
+	}*/
 
 	/**
 	 * Get whos online within the past x minutes.
@@ -193,7 +193,7 @@ class Profile extends ForumAppModel {
 		}
 
 		return $this->find('all', array(
-			'conditions' => array('Profile.currentLogin >' => date('Y-m-d H:i:s', strtotime('-'. $minutes .' minutes'))),
+			'conditions' => array('User.currentLogin >' => date('Y-m-d H:i:s', strtotime('-'. $minutes .' minutes'))),
 			'contain' => array('User'),
 			'cache' => array(__FUNCTION__ .'-'. $minutes, '+15 minutes')
 		));

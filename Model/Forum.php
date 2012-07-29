@@ -22,7 +22,10 @@ class Forum extends ForumAppModel {
 		'Utils.Sluggable' => array(
 			'separator' => '-',
 			'update' => true
-		)
+		),
+        'Pathable' => array(
+            'parent_field'  => 'forum_id'
+        )
 	);
 
 	/**
@@ -111,7 +114,7 @@ class Forum extends ForumAppModel {
 	);
 
 
-    public function beforeSave($options=array()) {
+    /*public function beforeSave($options=array()) {
         parent::beforeSave($options);
 
 
@@ -141,7 +144,7 @@ class Forum extends ForumAppModel {
 
 
         return true;
-    }
+    }*/
 
 	/**
 	 * Update all forums by going up the parent chain.
@@ -317,7 +320,7 @@ class Forum extends ForumAppModel {
 		return $hierarchy;
 	}
 
-    public function getPathHierarchy($forumId, $fullPath=true) {
+    /*public function getPathHierarchy($forumId, $fullPath=true) {
 
         $this->recursive = -1;
         $data = $this->findById($forumId);
@@ -355,7 +358,7 @@ class Forum extends ForumAppModel {
         }
 
 
-    }
+    }*/
 
 	/**
 	 * Get the list of forums for the board index.

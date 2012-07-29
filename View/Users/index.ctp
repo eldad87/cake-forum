@@ -23,8 +23,8 @@ $this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'act
 		<table class="table topics">
 		<tr>
 			<th><?php echo $this->Paginator->sort('User.' . $config['userMap']['username'], __d('forum', 'Username')); ?></th>
-			<th><?php echo $this->Paginator->sort('Profile.created', __d('forum', 'Joined')); ?></th>
-			<th><?php echo $this->Paginator->sort('Profile.lastLogin', __d('forum', 'Last Active')); ?></th>
+			<th><?php echo $this->Paginator->sort('User.created', __d('forum', 'Joined')); ?></th>
+			<th><?php echo $this->Paginator->sort('User.lastLogin', __d('forum', 'Last Active')); ?></th>
 			<th><?php echo $this->Paginator->sort('Profile.totalTopics', __d('forum', 'Topics')); ?></th>
 			<th><?php echo $this->Paginator->sort('Profile.totalPosts', __d('forum', 'Posts')); ?></th>
 		</tr>
@@ -34,10 +34,10 @@ $this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'act
 
 			<tr<?php if ($counter % 2) echo ' class="altRow"'; ?>>
 				<td><?php echo $this->Html->link($profile['User'][$config['userMap']['username']], array('action' => 'profile', $profile['User']['id'])); ?></td>
-				<td class="created"><?php echo $this->Time->nice($profile['Profile']['created'], $this->Common->timezone()); ?></td>
+				<td class="created"><?php echo $this->Time->nice($profile['User']['created'], $this->Common->timezone()); ?></td>
 				<td class="created">
-					<?php if (!empty($profile['Profile']['lastLogin'])) {
-						echo $this->Time->timeAgoInWords($profile['Profile']['lastLogin'], array('userOffset' => $this->Common->timezone()));
+					<?php if (!empty($profile['User']['lastLogin'])) {
+						echo $this->Time->timeAgoInWords($profile['User']['lastLogin'], array('userOffset' => $this->Common->timezone()));
 					} else {
 						echo '<em class="gray">'. __d('forum', 'Never') .'</em>';
 					} ?>
