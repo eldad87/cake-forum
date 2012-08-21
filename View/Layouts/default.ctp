@@ -1,5 +1,5 @@
 <?php echo $this->Html->docType('xhtml-trans'); ?> 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="<?php echo Configure::read('Config.languageDirection'); ?>">
 <head>
 <?php echo $this->Html->charset(); ?>
 <title><?php echo $title_for_layout; ?></title>

@@ -19,15 +19,16 @@ $this->Html->addCrumb($topic['Topic']['title'], array('controller' => 'topics', 
 
 <div class="container">
 	<div class="containerContent">
-		<?php echo $this->Form->input('title', array('label' => __d('forum', 'Title')));
-
+		<?php
 		if ($this->Common->hasAccess(AccessLevel::SUPER, $topic['Forum']['id'])) {
 			echo $this->Form->input('forum_id', array('label' => __d('forum', 'Forum'), 'options' => $forums, 'escape' => false, 'empty' => '-- '. __d('forum', 'Select a Forum') .' --'));
 			echo $this->Form->input('status', array('label' => __d('forum', 'Status'), 'options' => $this->Common->options('topicStatus')));
 			echo $this->Form->input('type', array('options' => $this->Common->options('topicTypes'), 'label' => __d('forum', 'Type')));
+			echo $this->Form->input('language', array('options' => $languages, 'label' => __d('forum', 'Language')));
 		} else {
 			echo $this->Form->input('forum_id', array('type' => 'hidden'));
-		} 
+            echo $this->Html->div('input text', $this->Form->label(null, __d('forum','Language')).$this->Form->request->data['Topic']['language']);
+		}
 
 		if (!empty($topic['Poll']['id'])) { ?>
 

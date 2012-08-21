@@ -218,16 +218,28 @@ class ForumAppModel extends AppModel {
 	 * @return boolean
 	 */
 	public function validateDecoda($model) {
-		$censored = array_map('trim', explode(',', $this->settings['censored_words']));
-		$locale = $this->config['decodaLocales'][Configure::read('Config.language')];
+
+
+        $lang = Configure::read('Config.language');
+        //If the model data have a field called language - use it.
+        if(isSet($this->data[$model]['language']) && !empty($this->data[$model]['language'])) {
+            $lang = $this->data[$model]['language'];
+        }
 
 		$decoda = new Decoda($this->data[$model]['content']);
-		$decoda->defaults()->setXhtml()->setLocale($locale);
-		$decoda->getHook('Censor')->blacklist($censored);
 
+        //Filter blacklisted words
+        if(isSet($this->config['decodaLocales'][$lang])) {
+            $decoda->defaults()->setXhtml()->setLocale($this->config['decodaLocales'][$lang]);
+            $censored = array_map('trim', explode(',', $this->settings['censored_words']));
+            $decoda->getHook('Censor')->blacklist($censored);
+        }
+
+        //Check XML
 		$parsed = $decoda->parse();
-		$errors = $decoda->getErrors();
 
+
+		$errors = $decoda->getErrors();
 		if (empty($errors)) {
 			$this->data[$model]['contentHtml'] = $parsed;
 

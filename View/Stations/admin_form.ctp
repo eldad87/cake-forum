@@ -38,7 +38,26 @@ $this->Html->addCrumb($title, $this->here); ?>
 		echo $this->Form->input('accessReply', array('options' => $this->Common->options('access'), 'label' => __d('forum', 'Reply Access')));
 		echo $this->Form->input('accessPoll', array('options' => $this->Common->options('access'), 'label' => __d('forum', 'Poll Access')));
 		echo $this->Form->input('settingPostCount', array('options' => $this->Common->options(), 'label' => __d('forum', 'Increase Users Post/Topic Count')));
-		echo $this->Form->input('settingAutoLock', array('options' => $this->Common->options(), 'label' => __d('forum', 'Auto-Lock Inactive Topics'))); ?>
+		echo $this->Form->input('settingAutoLock', array('options' => $this->Common->options(), 'label' => __d('forum', 'Auto-Lock Inactive Topics')));
+
+        ?>
+
+
+
+        <?php
+        foreach($languages AS $locate=>$lang) {
+            //The current lang will be saved by the form above
+            if($locate==Configure::read('Config.language')) {
+                continue;
+            }
+            $locate = str_replace('-', '_', $locate);
+            ?>
+            <div class="inputDivider"><?php echo __d('forum', $lang); ?></div>
+            <?
+            echo $this->Form->input('Forum.title_'.$locate, array('label' => __d('forum', 'Title')));
+            echo $this->Form->input('Forum.description_'.$locate, array('type' => 'textarea', 'label' => __d('forum', 'Description')));
+        }
+        ?>
 	</div>
 </div>
 	

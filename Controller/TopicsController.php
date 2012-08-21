@@ -101,7 +101,12 @@ class TopicsController extends ForumAppController {
 			}
 		} else {
 			$this->request->data['Topic']['forum_id'] = $forum['Forum']['id'];
+			$this->request->data['Topic']['language'] = Configure::read('Config.language');
 		}
+
+        App::uses('Languages', 'Utils.Lib');
+        $lang = new Languages();
+        $this->set('languages', $lang->lists('locale'));
 
 		$this->ForumToolbar->pageTitle($pageTitle);
 		$this->set('pageTitle', $pageTitle);
@@ -136,6 +141,10 @@ class TopicsController extends ForumAppController {
 			$topic['Poll']['expires'] = $this->Topic->daysBetween($topic['Poll']['created'], $topic['Poll']['expires']);
 			$this->request->data = $topic;
 		}
+
+        App::uses('Languages', 'Utils.Lib');
+        $lang = new Languages();
+        $this->set('languages', $lang->lists('locale'));
 
 		$this->ForumToolbar->pageTitle(__d('forum', 'Edit Topic'));
 		$this->set('topic', $topic);
@@ -244,6 +253,7 @@ class TopicsController extends ForumAppController {
 		$this->paginate['Post']['conditions'] = array('Post.topic_id' => $topic['Topic']['id']);
 
 		$this->ForumToolbar->pageTitle($topic['Forum']['title'], $topic['Topic']['title']);
+
 		$this->set('topic', $topic);
 		$this->set('posts', $this->paginate('Post'));
 		$this->set('subscription', $this->Subscription->isSubscribedToTopic($user_id, $topic['Topic']['id']));

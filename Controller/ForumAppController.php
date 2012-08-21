@@ -69,9 +69,15 @@ class ForumAppController extends AppController {
 		$this->settings = Configure::read('Forum.settings');
 
 		// Localization
-		$locale = $this->Auth->user('locale') ? $this->Auth->user('locale') : $this->settings['default_locale'];
+        /*$locale = $this->settings['default_locale'];
+        if($this->Session->read('Config.locate')) {
+            Configure::write('Config.language', $this->Session->read('Config.locate'));
+            $locale = $this->Session->read('Config.locate');
+        }*/
+
+		/*$locale = $this->Auth->user('locale') ? $this->Auth->user('locale') : $this->settings['default_locale'];
 		Configure::write('Config.language', $locale);
-		setlocale(LC_ALL, $locale .'UTF8', $locale .'UTF-8', $locale, 'eng.UTF8', 'eng.UTF-8', 'eng', 'en_US');
+		setlocale(LC_ALL, $locale .'UTF8', $locale .'UTF-8', $locale, 'eng.UTF8', 'eng.UTF-8', 'eng', 'en_US'); */
 
         /*// Authorization
           $referer = $this->referer();

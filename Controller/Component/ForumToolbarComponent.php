@@ -76,7 +76,7 @@ class ForumToolbarComponent extends Component {
 				$profile = ClassRegistry::init('Forum.Profile')->getUserProfile($user_id);
 				$profile = $profile['Profile'];
 
-                $profile['locale']      = $this->Controller->Auth->user('locale');
+                //$profile['locale']      = $this->Controller->Auth->user('locale');
                 $profile['timezone']    = $this->Controller->Auth->user('timezone');
                 $profile['currentLogin']= $this->Controller->Auth->user('currentLogin');
                 $profile['lastLogin']   = $this->Controller->Auth->user('lastLogin');

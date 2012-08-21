@@ -30,7 +30,8 @@ class Topic extends ForumAppModel {
 		'Utils.Sluggable' => array(
 			'separator' => '-',
 			'update' => true
-		)
+		),
+        'LanguageFilter'=>array('language_field'=>'Topic.language')
 	);
 
 	/**
@@ -510,7 +511,7 @@ class Topic extends ForumAppModel {
 						}
 					}
 				}
-			} else if (isset($results['post_count'])) {
+			} else if (isset($results['post_count']) && $postsPerPage) {
 				$results['page_count'] = ($results['post_count'] > $postsPerPage) ? ceil($results['post_count'] / $postsPerPage) : 1;
 			}
 		}

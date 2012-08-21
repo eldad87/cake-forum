@@ -7,6 +7,14 @@
 		"mail": "mail",
 		"quoteBy": "Quote by {author}"
 	},
+    "heb": {
+		"spoiler": "ספוילר",
+		"hide": "הסתר",
+		"show": "הצג",
+		"link": "קישור",
+		"mail": "דואר",
+		"quoteBy": "ציטוט של {author}"
+	},
 	"es-mx": {
 		"spoiler": "Alerón",
 		"hide": "Ocultar",

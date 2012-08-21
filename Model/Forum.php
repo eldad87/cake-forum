@@ -9,6 +9,7 @@
  */
 
 App::uses('ForumAppModel', 'Forum.Model');
+App::import('Behavior', 'AutoTranslate');
 
 class Forum extends ForumAppModel {
 
@@ -25,7 +26,8 @@ class Forum extends ForumAppModel {
 		),
         'Pathable' => array(
             'parent_field'  => 'forum_id'
-        )
+        ),
+        'AutoTranslate'=>array('title', 'description')
 	);
 
 	/**
@@ -110,43 +112,15 @@ class Forum extends ForumAppModel {
 				'rule' => 'notEmpty',
 				'message' => 'This setting is required'
 			)
-		)
+		),
+        /*'title_he_il' => 'notEmpty',
+        'description_he_il' => 'notEmpty',*/
 	);
 
+    public $translateModel = 'Forum.Forumi18n';
+    public $translateTable = 'forums_i18n';
 
-    /*public function beforeSave($options=array()) {
-        parent::beforeSave($options);
-
-
-        //Prepare path/deep/parent_subject_category_id
-        if( !isSet($this->data['Forum']['forum_id']) ) {
-            if(!$this->id) {
-                //Create new record, no parent id so set default
-                $this->data['Forum']['deep'] = 1;
-                $this->data['Forum']['path'] = null;
-                $this->data['Forum']['forum_id'] = 0;
-            }
-        } else if(!$this->data['Forum']['forum_id']) {
-            //if($this->id) - user change parent, else its a new main category
-            $this->data['Forum']['deep'] = 1;
-            $this->data['Forum']['path'] = null;
-            $this->data['Forum']['forum_id'] = 0;
-        } else {
-            $parentData = $this->findById($this->data['Forum']['forum_id']);
-            $parentData = $parentData['Forum'];
-
-            $this->data['Forum']['deep'] = $parentData['deep']+1;
-
-            $parentPath = $parentData['path'] ? explode(',', $parentData['path']) : array();
-            $parentPath[] = $parentData['id'];
-            $this->data['Forum']['path'] = implode(',', $parentPath);
-        }
-
-
-        return true;
-    }*/
-
-	/**
+        /**
 	 * Update all forums by going up the parent chain.
 	 *
 	 * @access public

@@ -236,6 +236,10 @@ class StationsController extends ForumAppController {
 		}
 
 		$this->ForumToolbar->pageTitle(__d('forum', 'Add Forum'));
+
+        App::uses('Languages', 'Utils.Lib');
+        $lang = new Languages();
+        $this->set('languages', $lang->lists('locale'));
 		$this->set('method', 'add');
 		$this->set('levels', $this->Forum->AccessLevel->getHigherLevels());
 		$this->set('forums', $this->Forum->getHierarchy());
@@ -248,6 +252,7 @@ class StationsController extends ForumAppController {
 	 * @param int $id
 	 */
 	public function admin_edit($id) {
+        $this->Forum->setFindWithAllTranslations();
 		$forum = $this->Forum->getById($id);
 
 		$this->ForumToolbar->verifyAccess(array(
@@ -277,6 +282,14 @@ class StationsController extends ForumAppController {
 		}
 
 		$this->ForumToolbar->pageTitle(__d('forum', 'Edit Forum'), $forum['Forum']['title']);
+
+        $templateLanguages = Configure::read('template_languages');
+        if(Configure::read('language')) {
+            //Remove the current language - it will be saved by the using the model original fields
+            unset($templateLanguages[Configure::read('language')]);
+        }
+        $this->set('languages', $templateLanguages);
+
 		$this->set('method', 'edit');
 		$this->set('levels', $this->Forum->AccessLevel->getHigherLevels());
 		$this->set('forums', $this->Forum->getHierarchy());
