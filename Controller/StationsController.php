@@ -237,9 +237,13 @@ class StationsController extends ForumAppController {
 
 		$this->ForumToolbar->pageTitle(__d('forum', 'Add Forum'));
 
-        App::uses('Languages', 'Utils.Lib');
-        $lang = new Languages();
-        $this->set('languages', $lang->lists('locale'));
+        $templateLanguages = Configure::read('template_languages');
+        if(Configure::read('language')) {
+            //Remove the current language - it will be saved by the using the model original fields
+            unset($templateLanguages[Configure::read('language')]);
+        }
+        $this->set('languages', $templateLanguages);
+
 		$this->set('method', 'add');
 		$this->set('levels', $this->Forum->AccessLevel->getHigherLevels());
 		$this->set('forums', $this->Forum->getHierarchy());

@@ -212,11 +212,12 @@ class Post extends ForumAppModel {
 	 * @param int $limit
 	 * @return array
 	 */
-	public function getLatestByUser($user_id, $limit = 5) {
+	public function getLatestByUser($user_id, $limit = 5, $page=1) {
 		return $this->find('all', array(
 			'conditions' => array('Post.user_id' => $user_id),
 			'order' => array('Post.created' => 'DESC'),
 			'limit' => $limit,
+            'page' => $page,
 			'contain' => array(
 				'Topic' => array('User')
 			)

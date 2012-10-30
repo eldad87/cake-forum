@@ -375,11 +375,12 @@ class Topic extends ForumAppModel {
 	 * @param int $limit
 	 * @return array
 	 */
-	public function getLatest($limit = 10) {
+	public function getLatest($limit = 10, $page=1) {
 		return $this->find('all', array(
 			'order' => array('Topic.created' => 'DESC'),
 			'contain' => array('User', 'LastPost', 'FirstPost'),
 			'limit' => $limit,
+            'page'=>$page,
 			'cache' => array(__FUNCTION__ .'-'. $limit, '+5 minutes')
 		));
 	}

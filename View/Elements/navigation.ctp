@@ -7,7 +7,19 @@
 	<?php $links = array();
 
 	if ($user) {
-		$links[] = $this->Html->link(__d('forum', 'Logout'), $config['routes']['logout']);
+
+
+        /*switch($loginClient) {
+            case 'facebook':
+                $links[] = $this->Facebook->logout(array( 'label'=>__d('forum', 'Logout'), 'redirect'=>$config['routes']['logout']));
+                //$links[] = $this->Html->link(__d('forum', 'Logout'), $config['routes']['logout']);
+                break;
+
+            default:*/
+                $links[] = $this->Html->link(__d('forum', 'Logout'), $config['routes']['logout']);
+                /*break;
+        }*/
+
 		//$links[] = $this->Html->link(__d('forum', 'View New Posts'), array('controller' => 'search', 'action' => 'index', 'new_posts', 'admin' => false));
 		$links[] = $this->Html->link(__d('forum', 'Dashboard'), array('controller' => 'users', 'action' => 'dashboard', 'admin' => false));
 
