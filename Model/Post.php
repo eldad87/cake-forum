@@ -305,7 +305,7 @@ class Post extends ForumAppModel {
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function beforeSave($options) {
+	public function beforeSave($options=array()) {
 		if (isset($this->data['Post']['content'])) {
 			return $this->validateDecoda('Post');
 		}
