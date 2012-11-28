@@ -1,24 +1,22 @@
 <?php
 
-if ($method == 'add') {
+if ($method === 'add') {
 	$button = __d('forum', 'Save');
 	$title = __d('forum', 'Add Forum');
 } else {
 	$button = __d('forum', 'Update');
 	$title = __d('forum', 'Edit Forum');
-} 
+}
 
-$this->Html->addCrumb(__d('forum', 'Administration'), array('controller' => 'forum', 'action' => 'index'));
-$this->Html->addCrumb(__d('forum', 'Forums'), array('controller' => 'stations', 'action' => 'index'));
-$this->Html->addCrumb($title, $this->here); ?>
+$this->Breadcrumb->add(__d('forum', 'Administration'), array('controller' => 'forum', 'action' => 'index'));
+$this->Breadcrumb->add(__d('forum', 'Forums'), array('controller' => 'stations', 'action' => 'index'));
+$this->Breadcrumb->add($title, $this->here); ?>
 
 <div class="title">
 	<h2><?php echo $title; ?></h2>
 </div>
 
-<?php echo $this->Form->create('Forum', array(
-	'url' => array('controller' => 'stations')
-)); ?>
+<?php echo $this->Form->create('Forum'); ?>
 
 <div class="container">
 	<div class="containerContent">
@@ -31,8 +29,8 @@ $this->Html->addCrumb($title, $this->here); ?>
 
 		<?php
 		echo $this->Form->input('description', array('type' => 'textarea', 'label' => __d('forum', 'Description')));
-		echo $this->Form->input('forum_id', array('options' => $forums, 'label' => __d('forum', 'Forum'), 'escape' => false, 'empty' => '-- '. __d('forum', 'None') .' --'));
-		echo $this->Form->input('access_level_id', array('options' => $levels, 'label' => __d('forum', 'Restrict Access To'), 'empty' => '-- '. __d('forum', 'None') .' --'));
+		echo $this->Form->input('forum_id', array('options' => $forums, 'label' => __d('forum', 'Forum'), 'empty' => '-- ' . __d('forum', 'None') . ' --'));
+		echo $this->Form->input('access_level_id', array('options' => $levels, 'label' => __d('forum', 'Restrict Access To'), 'empty' => '-- ' . __d('forum', 'None') . ' --'));
 		echo $this->Form->input('accessRead', array('options' => $this->Common->options('access', null, true), 'label' => __d('forum', 'Read Access')));
 		echo $this->Form->input('accessPost', array('options' => $this->Common->options('access'), 'label' => __d('forum', 'Post Access')));
 		echo $this->Form->input('accessReply', array('options' => $this->Common->options('access'), 'label' => __d('forum', 'Reply Access')));
@@ -60,7 +58,7 @@ $this->Html->addCrumb($title, $this->here); ?>
         ?>
 	</div>
 </div>
-	
+
 <?php
 echo $this->Form->submit($button, array('class' => 'button'));
 echo $this->Form->end(); ?>

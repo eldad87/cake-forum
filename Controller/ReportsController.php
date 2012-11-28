@@ -9,7 +9,6 @@
  */
 
 App::uses('ForumAppController', 'Forum.Controller');
-// Not sure why Cake isn't inheriting it from $uses
 App::uses('Report', 'Forum.Model');
 
 class ReportsController extends ForumAppController {
@@ -71,7 +70,7 @@ class ReportsController extends ForumAppController {
 	 * Reported topics.
 	 */
 	public function admin_topics() {
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			if (!empty($this->request->data['Report']['items'])) {
 				$this->loadModel('Forum.Topic');
 
@@ -106,7 +105,7 @@ class ReportsController extends ForumAppController {
 	 * Reported posts.
 	 */
 	public function admin_posts() {
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			if (!empty($this->request->data['Report']['items'])) {
 				$this->loadModel('Forum.Post');
 
@@ -137,7 +136,7 @@ class ReportsController extends ForumAppController {
 	 * Reported users.
 	 */
 	public function admin_users() {
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			if (!empty($this->request->data['Report']['items'])) {
 				$this->loadModel('User');
 

@@ -1,24 +1,21 @@
-<?php 
-
-$this->Html->addCrumb($settings['site_name'], array('controller' => 'forum', 'action' => 'index'));
+<?php
 
 if (!empty($forum['Parent']['slug'])) {
-	$this->Html->addCrumb($forum['Parent']['title'], array('controller' => 'stations', 'action' => 'view', $forum['Parent']['slug']));
+	$this->Breadcrumb->add($forum['Parent']['title'], array('controller' => 'stations', 'action' => 'view', $forum['Parent']['slug']));
 }
 
-$this->Html->addCrumb($forum['Forum']['title'], array('controller' => 'stations', 'action' => 'view', $forum['Forum']['slug'])); ?>
+$this->Breadcrumb->add($forum['Forum']['title'], array('controller' => 'stations', 'action' => 'view', $forum['Forum']['slug']));
+$this->Breadcrumb->add(__d('forum', 'Moderate'), array('action' => 'moderate', $forum['Forum']['slug'])); ?>
 
 <div class="controls float-right">
 	<?php echo $this->Html->link(__d('forum', 'Return to Forum'), array('controller' => 'stations', 'action' => 'view', $forum['Forum']['slug']), array('class' => 'button')); ?>
 </div>
 
 <div class="title">
-	<h2><?php echo __d('forum', 'Moderate'); ?>: <?php echo $forum['Forum']['title']; ?></h2>
+	<h2><?php echo __d('forum', 'Moderate'); ?>: <?php echo h($forum['Forum']['title']); ?></h2>
 </div>
 
-<?php echo $this->Form->create('Topic', array(
-	'url' => array('controller' => 'stations', $forum['Forum']['slug'])
-)); ?>
+<?php echo $this->Form->create('Topic'); ?>
 
 <div class="container" id="topics">
 	<div class="containerContent">
@@ -39,7 +36,7 @@ $this->Html->addCrumb($forum['Forum']['title'], array('controller' => 'stations'
 			</thead>
 			<tbody>
 
-			<?php if (!empty($topics)) {
+			<?php if ($topics) {
 				foreach ($topics as $counter => $topic) {
 					echo $this->element('tiles/topic_row', array(
 						'topic' => $topic,
@@ -63,7 +60,7 @@ $this->Html->addCrumb($forum['Forum']['title'], array('controller' => 'stations'
 </div>
 
 <div class="moderate">
-	<?php 
+	<?php
 	echo $this->Form->input('action', array(
 		'options' => array(
 			'open' => __d('forum', 'Open Topic(s)'),
@@ -71,11 +68,11 @@ $this->Html->addCrumb($forum['Forum']['title'], array('controller' => 'stations'
 			'move' => __d('forum', 'Move Topic(s)'),
 			'delete' => __d('forum', 'Delete Topic(s)')
 		),
-		'div' => false, 
-		'label' => __d('forum', 'Perform Action') .': '
+		'div' => false,
+		'label' => __d('forum', 'Perform Action') . ': '
 	));
-	
-	echo $this->Form->input('move_id', array('options' => $forums, 'div' => false, 'label' => __d('forum', 'Move To') .': ', 'escape' => false));
+
+	echo $this->Form->input('move_id', array('options' => $forums, 'div' => false, 'label' => __d('forum', 'Move To') . ': '));
 	echo $this->Form->submit(__d('forum', 'Process'), array('div' => false, 'class' => 'buttonSmall')); ?>
 </div>
 

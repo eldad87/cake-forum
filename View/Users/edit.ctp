@@ -1,16 +1,13 @@
-<?php 
+<?php
 
-$this->Html->addCrumb($settings['site_name'], array('controller' => 'forum', 'action' => 'index'));
-$this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'action' => 'index'));
-$this->Html->addCrumb(__d('forum', 'Edit Profile'), array('controller' => 'users', 'action' => 'edit')); ?>
+$this->Breadcrumb->add(__d('forum', 'Users'), array('controller' => 'users', 'action' => 'index'));
+$this->Breadcrumb->add(__d('forum', 'Edit Profile'), array('controller' => 'users', 'action' => 'edit')); ?>
 
 <div class="title">
 	<h2><?php echo __d('forum', 'Edit Profile'); ?></h2>
 </div>
 
-<?php echo $this->Form->create('Profile', array(
-	'url' => array('controller' => 'users', 'action' => 'edit')
-)); ?>
+<?php echo $this->Form->create('Profile'); ?>
 
 <div class="container">
 	<div class="containerContent">
@@ -22,6 +19,6 @@ $this->Html->addCrumb(__d('forum', 'Edit Profile'), array('controller' => 'users
 	</div>
 </div>
 
-<?php 
+<?php
 echo $this->Form->submit(__d('forum', 'Update Account'), array('class' => 'button'));
 echo $this->Form->end(); ?>

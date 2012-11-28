@@ -57,23 +57,14 @@ class SearchController extends ForumAppController {
 			'Topic.view_count' => __d('forum', 'Total views')
 		);
 
-		if (!empty($this->params['named'])) {
-			foreach ($this->params['named'] as $field => $value) {
+		if ($this->request->params['named']) {
+			foreach ($this->request->params['named'] as $field => $value) {
 				$this->request->data['Topic'][$field] = urldecode($value);
 			}
 		}
 
-        /*app::import('model', 'Forum.Topic');
-        $tObj = new Topic();
-
-
-        $tObj->recursive = 2;
-        $tObj->find('all');*/
 
         $query = $this->_searchDefaultQueryParams();
-        /*if ($type == 'new_posts') {
-            $query['fq']['last_modified']= '['.$this->Session->read('Forum.lastVisit').' TO *]';
-        }*/
         $topicsData = array('topics'=>array(), 'count'=>null); //Default
         if (!empty($this->request->data)) {
             $searching = true;
@@ -84,36 +75,6 @@ class SearchController extends ForumAppController {
         $this->_overridePagination($query, $topicsData);
 
 
-		/*if ($type == 'new_posts') {
-			$this->request->data['Topic']['orderBy'] = 'LastPost.created';
-			$this->paginate['Topic']['conditions']['LastPost.created >='] = $this->Session->read('Forum.lastVisit');
-		}
-
-		if (!empty($this->request->data)) {
-			$searching = true;
-
-			if (!empty($this->request->data['Topic']['keywords'])) {
-				$this->paginate['Topic']['conditions']['Topic.title LIKE'] = '%'. Sanitize::clean($this->request->data['Topic']['keywords']) .'%';
-			}
-
-			if (!empty($this->request->data['Topic']['forum_id'])) {
-				$this->paginate['Topic']['conditions']['Topic.forum_id'] = $this->request->data['Topic']['forum_id'];
-			}
-
-			if (!empty($this->request->data['Topic']['byUser'])) {
-				$this->paginate['Topic']['conditions']['User.'. $this->config['userMap']['username'] .' LIKE'] = '%'. Sanitize::clean($this->request->data['Topic']['byUser']) .'%';
-			}
-
-			if (empty($this->request->data['Topic']['orderBy']) || !isset($orderBy[$this->request->data['Topic']['orderBy']])) {
-				$this->request->data['Topic']['orderBy'] = 'LastPost.created';
-			}
-
-			$this->paginate['Topic']['conditions']['Forum.accessRead <='] = $this->Session->read('Forum.access');
-			$this->paginate['Topic']['order'] = array($this->request->data['Topic']['orderBy'] => 'DESC');
-			$this->paginate['Topic']['limit'] = $this->settings['topics_per_page'];
-
-			$this->set('topics', $this->paginate('Topic'));
-		}*/
 
 		$this->ForumToolbar->pageTitle(__d('forum', 'Search'));
 		$this->set('menuTab', 'search');
@@ -180,7 +141,7 @@ class SearchController extends ForumAppController {
 		}
 
 		foreach ($this->request->data['Topic'] as $field => $value) {
-			if ($value != '') {
+			if ($value !== '') {
 				$named[$field] = urlencode($value);
 			}
 		}

@@ -29,14 +29,6 @@ class UsersController extends ForumAppController {
 	public $components = array('Email');
 
 	/**
-	 * Helpers.
-	 *
-	 * @access public
-	 * @var array
-	 */
-	public $helpers = array('Utils.Gravatar');
-
-	/**
 	 * Pagination.
 	 *
 	 * @access public
@@ -55,12 +47,12 @@ class UsersController extends ForumAppController {
 	public function index() {
 		$this->paginate['Profile']['conditions']['User.' . $this->config['userMap']['status']] = $this->config['statusMap']['active'];
 
-		if (!empty($this->params['named']['username'])) {
-			$this->request->data['Profile']['username'] = $this->params['named']['username'];
-			$this->paginate['Profile']['conditions']['User.' . $this->config['userMap']['username'] . ' LIKE'] = '%' . Sanitize::clean($this->params['named']['username']) . '%';
+		if (!empty($this->request->params['named']['username'])) {
+			$this->request->data['Profile']['username'] = $this->request->params['named']['username'];
+			$this->paginate['Profile']['conditions']['User.' . $this->config['userMap']['username'] . ' LIKE'] = '%' . Sanitize::clean($this->request->params['named']['username']) . '%';
 		}
 
-		$this->paginate['Profile']['order'] = array('User.'. $this->config['userMap']['username'] => 'ASC');
+		$this->paginate['Profile']['order'] = array('User.' . $this->config['userMap']['username'] => 'ASC');
 
 		$this->ForumToolbar->pageTitle(__d('forum', 'User List'));
 		$this->set('users', $this->paginate('Profile'));
@@ -73,7 +65,7 @@ class UsersController extends ForumAppController {
 		$named = array();
 
 		foreach ($this->request->data['Profile'] as $field => $value) {
-			if ($value != '') {
+			if ($value !== '') {
 				$named[$field] = urlencode($value);
 			}
 		}
@@ -103,11 +95,10 @@ class UsersController extends ForumAppController {
 		$user_id = $this->Auth->user('id');
 		$profile = $this->Profile->getUserProfile($user_id);
 
-		if (!empty($this->request->data)) {
-            $this->request->data['Profile']['id'] = $profile['Profile']['id'];
-            $this->request->data['User']['user_id'] = $user_id;
-			if ($this->Profile->User->saveAll($this->request->data, true)) {
-                $this->Session->delete('Forum'); //So the config will update
+		if ($this->request->data) {
+			$this->Profile->id = $profile['Profile']['id'];
+
+			if ($this->Profile->save($this->request->data, true)) {
 				$this->Session->setFlash(__d('forum', 'Your profile information has been updated!'));
 			}
 		} else {
@@ -126,7 +117,7 @@ class UsersController extends ForumAppController {
 	public function profile($user_id) {
 		$profile = $this->Profile->getByUser($user_id);
 
-		if (empty($profile)) {
+		if (!$profile) {
 			throw new NotFoundException(__d('forum', 'Profile does not exist.'));
 		}
 
@@ -147,19 +138,19 @@ class UsersController extends ForumAppController {
 	public function report($user_id) {
 		$profile = $this->Profile->getByUser($user_id);
 
-		if (empty($profile)) {
+		if (!$profile) {
 			throw new NotFoundException(__d('forum', 'Profile does not exist.'));
 		}
 
 		$this->loadModel('Forum.Report');
 
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			$this->request->data['Report']['user_id'] = $this->Auth->user('id');
 			$this->request->data['Report']['item_id'] = $user_id;
 			$this->request->data['Report']['itemType'] = Report::USER;
 
 			if ($this->Report->save($this->request->data, true, array('item_id', 'itemType', 'user_id', 'comment'))) {
-				$this->Session->setFlash(__d('forum', 'You have succesfully reported this user! A moderator will review this topic and take the necessary action.'));
+				$this->Session->setFlash(__d('forum', 'You have successfully reported this user! A moderator will review this topic and take the necessary action.'));
 				unset($this->request->data['Report']);
 			}
 		}
@@ -172,9 +163,9 @@ class UsersController extends ForumAppController {
 	 * Admin index!
 	 */
 	public function admin_index() {
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			if (!empty($this->request->data['Profile']['username'])) {
-				$this->paginate['Profile']['conditions']['User.'. $this->config['userMap']['username'] .' LIKE'] = '%'. Sanitize::clean($this->request->data['Profile']['username']) .'%';
+				$this->paginate['Profile']['conditions']['User.' . $this->config['userMap']['username'] . ' LIKE'] = '%' . Sanitize::clean($this->request->data['Profile']['username']) . '%';
 			}
 
 			if (!empty($this->request->data['Profile']['id'])) {
@@ -182,7 +173,7 @@ class UsersController extends ForumAppController {
 			}
 		}
 
-		$this->paginate['Profile']['order'] = array('User.'. $this->config['userMap']['username'] => 'ASC');
+		$this->paginate['Profile']['order'] = array('User.' . $this->config['userMap']['username'] => 'ASC');
 
 		$this->ForumToolbar->pageTitle(__d('forum', 'Manage Users'));
 		$this->set('users', $this->paginate('Profile'));
@@ -195,17 +186,17 @@ class UsersController extends ForumAppController {
 	 * @throws NotFoundException
 	 */
 	public function admin_edit($id) {
-		$profile = $this->Profile->get($id);
+		$profile = $this->Profile->getById($id);
 
-		if (empty($profile)) {
+		if (!$profile) {
 			throw new NotFoundException(__d('forum', 'Profile does not exist.'));
 		}
 
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			$this->Profile->id = $id;
 
 			if ($this->Profile->save($this->request->data, true)) {
-				$this->Session->setFlash(sprintf(__d('forum', 'Profile for %s has been updated.'), '<strong>'. $profile['User'][$this->config['userMap']['username']] .'</strong>'));
+				$this->Session->setFlash(sprintf(__d('forum', 'Profile for %s has been updated.'), '<strong>' . $profile['User'][$this->config['userMap']['username']] . '</strong>'));
 				$this->redirect(array('controller' => 'users', 'action' => 'index', 'admin' => true));
 			}
 		} else {
@@ -226,9 +217,9 @@ class UsersController extends ForumAppController {
 		$this->User->id = $user_id;
 		$this->User->saveField($this->config['userMap']['status'], $this->config['statusMap'][$status]);
 
-		if ($status == 'active') {
+		if ($status === 'active') {
 			$message = __d('forum', 'User has been activated.');
-		} else if ($status == 'banned') {
+		} else {
 			$message = __d('forum', 'User has been banned.');
 		}
 

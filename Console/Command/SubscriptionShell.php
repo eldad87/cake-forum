@@ -9,7 +9,7 @@
  */
 
 Configure::write('debug', 2);
-Configure::load('Forum.config');
+Configure::write('Cache.disable', true);
 
 App::uses('CakeEmail', 'Network/Email');
 
@@ -35,7 +35,7 @@ class SubscriptionShell extends Shell {
 		$this->out();
 		$this->out('Plugin: Forum');
 		$this->out('Version: ' . $this->config['version']);
-		$this->out('Copyright: Miles Johnson, 2010-'. date('Y'));
+		$this->out('Copyright: Miles Johnson, 2010-' . date('Y'));
 		$this->out('Help: http://milesj.me/code/cakephp/forum');
 		$this->out('Shell: Subscription');
 		$this->out();
@@ -52,7 +52,7 @@ class SubscriptionShell extends Shell {
 			'contain' => array('User')
 		));
 
-		if (empty($results)) {
+		if (!$results) {
 			$this->out('No subscriptions to send...');
 			return;
 		}
@@ -82,12 +82,14 @@ class SubscriptionShell extends Shell {
 		// Query for the latest topics
 		$topics = $this->getTopics($forumIds, $topicIds);
 
-		if (empty($topics)) {
+		if (!$topics) {
 			$this->out('No new activity...');
 			return;
 		}
 
 		$email = new CakeEmail();
+		//$email->transport('Debug');
+		$email->subject(sprintf(__d('forum', '%s [Subscriptions]'), $this->settings['site_name']));
 		$email->from($this->settings['site_email']);
 		$email->replyTo($this->settings['site_email']);
 		$email->emailFormat('text');
@@ -95,7 +97,6 @@ class SubscriptionShell extends Shell {
 		// Loop over each user and send one email
 		foreach ($users as $user_id => $user) {
 			$email->to($user[$this->config['userMap']['email']]);
-			$email->subject(sprintf(__d('forum', '%s [Subscriptions]'), $this->settings['site_name']));
 
 			if ($message = $this->formatEmail($user, $topics)) {
 				$email->send($message);
@@ -131,7 +132,7 @@ class SubscriptionShell extends Shell {
 			'contain' => array('Forum')
 		));
 
-		if (!empty($results)) {
+		if ($results) {
 			foreach ($results as &$result) {
 				$clean[$result['Topic']['id']] = $result;
 			}
@@ -146,7 +147,7 @@ class SubscriptionShell extends Shell {
 			'contain' => array('Forum')
 		));
 
-		if (!empty($results)) {
+		if ($results) {
 			foreach ($results as &$result) {
 				$result['Topic']['post_count_new'] = $this->Subscription->Topic->Post->find('count', array(
 					'conditions' => array(

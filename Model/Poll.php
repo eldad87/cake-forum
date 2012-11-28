@@ -32,10 +32,10 @@ class Poll extends ForumAppModel {
 	 */
 	public $hasMany = array(
 		'PollOption' => array(
-			'className'	=> 'Forum.PollOption',
+			'className' => 'Forum.PollOption',
 			'exclusive' => true,
 			'dependent' => true,
-			'order' 	=> array('PollOption.id' => 'ASC'),
+			'order' => array('PollOption.id' => 'ASC'),
 		),
 		'PollVote' => array(
 			'className' => 'Forum.PollVote',
@@ -54,20 +54,20 @@ class Poll extends ForumAppModel {
 	public function addPoll($data) {
 		$poll = array(
 			'topic_id' => $data['topic_id'],
-			'expires' => !empty($data['expires']) ? date('Y-m-d H:i:s', strtotime('+'. $data['expires'] .' days')) : null
+			'expires' => !empty($data['expires']) ? date('Y-m-d H:i:s', strtotime('+' . $data['expires'] . ' days')) : null
 		);
 
 		if ($this->save($poll, false, array('topic_id', 'expires'))) {
 			$poll_id = $this->id;
-			$options = explode("\n", strip_tags($data['options']));
+			$options = explode("\n", $data['options']);
 			$results = array(
 				'poll_id' => $poll_id,
 				'vote_count' => 0
 			);
 
-			foreach ($options as $id => $opt) {
-				if (!empty($opt)) {
-					$results['option'] = htmlentities($opt, ENT_NOQUOTES, 'UTF-8');
+			foreach ($options as $opt) {
+				if ($opt) {
+					$results['option'] = trim($opt);
 
 					$this->PollOption->create();
 					$this->PollOption->save($results, false, array_keys($results));
@@ -90,7 +90,7 @@ class Poll extends ForumAppModel {
 	public function process($poll) {
 		$user_id = $this->Session->read('Auth.User.id');
 
-		if (!empty($poll)) {
+		if ($poll) {
 			$totalVotes = 0;
 
 			foreach ($poll['PollOption'] as $option) {
@@ -123,7 +123,7 @@ class Poll extends ForumAppModel {
 			'contain' => false
 		));
 
-		if (!empty($poll)) {
+		if ($poll) {
 			if (!empty($poll['Poll']['expires']) && $poll['Poll']['expires'] <= date('Y-m-d H:i:s')) {
 				return false;
 			}

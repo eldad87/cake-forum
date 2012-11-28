@@ -154,7 +154,7 @@ class Setting extends ForumAppModel {
 	public function getSettings() {
 		return $this->find('list', array(
 			'fields' => array('Setting.key', 'Setting.value'),
-			'cache' => __FUNCTION__
+			'cache' => __METHOD__
 		));
 	}
 
@@ -165,7 +165,7 @@ class Setting extends ForumAppModel {
 	 * @param array $data
 	 * @return boolean
 	 */
-	public function update($data) {
+	public function updateSettings($data) {
 		$this->set($data);
 
 		if ($this->validates()) {

@@ -42,7 +42,7 @@ class CommonHelper extends AppHelper {
 			$icon = 'new';
 		}
 
-		return $this->Html->image('/forum/img/forum_'. $icon .'.png', array(
+		return $this->Html->image('/forum/img/forum_' . $icon . '.png', array(
 			'alt' => ucfirst($icon)
 		));
 	}
@@ -64,12 +64,11 @@ class CommonHelper extends AppHelper {
 	 * @return int
 	 */
 	public function getTopicsMade() {
-		$topics = $this->Session->read('Forum.topics');
 		$pastHour = strtotime('-1 hour');
 		$count = 0;
 
-		if (!empty($topics)) {
-			foreach ($topics as $id => $time) {
+		if ($topics = $this->Session->read('Forum.topics')) {
+			foreach ($topics as $time) {
 				if ($time >= $pastHour) {
 					++$count;
 				}
@@ -86,12 +85,11 @@ class CommonHelper extends AppHelper {
 	 * @return int
 	 */
 	public function getPostsMade() {
-		$posts = $this->Session->read('Forum.posts');
 		$pastHour = strtotime('-1 hour');
 		$count = 0;
 
-		if (!empty($posts)) {
-			foreach ($posts as $id => $time) {
+		if ($posts = $this->Session->read('Forum.posts')) {
+			foreach ($posts as $time) {
 				if ($time >= $pastHour) {
 					++$count;
 				}
@@ -99,6 +97,42 @@ class CommonHelper extends AppHelper {
 		}
 
 		return $count;
+	}
+
+	/**
+	 * Render out a gravatar thumbnail based on an email.
+	 *
+	 * @access public
+	 * @param string $email
+	 * @param array $options
+	 * @param array $attributes
+	 * @return string
+	 */
+	public function gravatar($email, array $options = array(), array $attributes = array()) {
+		$options = $options + array(
+			'default' => 'mm',
+			'size' => 80,
+			'rating' => 'g',
+			'hash' => 'md5',
+			'secure' => env('HTTPS')
+		);
+
+		$email = Security::hash(strtolower(trim($email)), $options['hash']);
+		$query = array();
+
+		if ($options['secure']) {
+			$image = 'https://secure.gravatar.com/avatar/' . $email;
+		} else {
+			$image = 'http://www.gravatar.com/avatar/' . $email;
+		}
+
+		foreach (array('default' => 'd', 'size' => 's', 'rating' => 'r') as $key => $param) {
+			$query[] = $param . '=' . urlencode($options[$key]);
+		}
+
+		$image .= '?' . implode('&amp;', $query);
+
+		return $this->Html->image($image, $attributes);
 	}
 
 	/**
@@ -134,7 +168,7 @@ class CommonHelper extends AppHelper {
 		$highest = array();
 
 		foreach ($levels as $level) {
-			if (empty($highest)) {
+			if (!$highest) {
 				$highest = $level;
 			} else if ($level['AccessLevel']['level'] > $highest['AccessLevel']['level']) {
 				$highest = $level;
@@ -154,49 +188,49 @@ class CommonHelper extends AppHelper {
 	 * @return array|string
 	 */
 	public function options($type = 'status', $value = '', $guest = false) {
-		if ($type == 'status') {
+		if ($type === 'status') {
 			$options = array(
 				1 => __d('forum', 'Yes'),
 				0 => __d('forum', 'No')
 			);
 
-		} else if ($type == 'topicStatus') {
+		} else if ($type === 'topicStatus') {
 			$options = array(
 				1 => __d('forum', 'Open'),
 				0 => __d('forum', 'Closed')
 			);
 
-		} else if ($type == 'forumStatus') {
+		} else if ($type === 'forumStatus') {
 			$options = array(
 				1 => __d('forum', 'Visible'),
 				0 => __d('forum', 'Hidden')
 			);
 
-		} else if ($type == 'access') {
+		} else if ($type === 'access') {
 			$options = array(
-				1 => '1 ('. __d('forum', 'Member') .')',
+				1 => '1 (' . __d('forum', 'Member') . ')',
 				2 => '2',
 				3 => '3',
-				4 => '4 ('. __d('forum', 'Moderator') .')',
+				4 => '4 (' . __d('forum', 'Moderator') . ')',
 				5 => '5',
 				6 => '6',
-				7 => '7 ('. __d('forum', 'Super Moderator') .')',
+				7 => '7 (' . __d('forum', 'Super Moderator') . ')',
 				8 => '8',
 				9 => '9',
-				10 => '10 ('. __d('forum', 'Administrator') .')'
+				10 => '10 (' . __d('forum', 'Administrator') . ')'
 			);
 
 			if ($guest) {
-				array_unshift($options, '0 ('. __d('forum', 'Guest') .')');
+				array_unshift($options, '0 (' . __d('forum', 'Guest') . ')');
 			}
 
-		} else if ($type == 'userStatus') {
+		} else if ($type === 'userStatus') {
 			$options = array(
 				0 => __d('forum', 'Active'),
 				1 => __d('forum', 'Banned')
 			);
 
-		} else if ($type == 'topicTypes') {
+		} else if ($type === 'topicTypes') {
 			$options = array(
 				0 => __d('forum', 'Normal'),
 				1 => __d('forum', 'Sticky'),
@@ -204,7 +238,7 @@ class CommonHelper extends AppHelper {
 				3 => __d('forum', 'Announcement')
 			);
 
-		} else if ($type == 'statusMap') {
+		} else if ($type === 'statusMap') {
 			$statuses = array_flip(Configure::read('Forum.statusMap'));
 			$options = array();
 
@@ -288,13 +322,13 @@ class CommonHelper extends AppHelper {
 			}
 		}
 
-		if ($icon == 'open' || $icon == 'new') {
+		if ($icon === 'open' || $icon === 'new') {
 			if ($topic['Topic']['post_count'] >= Configure::read('Forum.settings.posts_till_hot_topic')) {
 				$icon .= '_hot';
 			}
 		}
 
-		return $this->Html->image('/forum/img/topic_'. $icon .'.png', array(
+		return $this->Html->image('/forum/img/topic_' . $icon . '.png', array(
 			'alt' => ucfirst($icon)
 		));
 	}
@@ -333,13 +367,13 @@ class CommonHelper extends AppHelper {
 	 * @return string
 	 */
 	public function topicType($type = null) {
-		if (empty($type)) {
-			return;
+		if (!$type) {
+			return '';
 		}
 
 		$types = $this->options('topicTypes');
 
-		return $this->output('<strong>'. $types[$type] .'</strong>');
+		return $this->output('<strong>' . $types[$type] . '</strong>');
 	}
 
 }

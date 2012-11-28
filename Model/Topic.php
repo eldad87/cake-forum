@@ -27,9 +27,8 @@ class Topic extends ForumAppModel {
 	 * @var array
 	 */
 	public $actsAs = array(
-		'Utils.Sluggable' => array(
-			'separator' => '-',
-			'update' => true
+		'Utility.Sluggable' => array(
+			'length' => 100
 		),
         'LanguageFilter'=>array('language_field'=>'Topic.language')
 	);
@@ -41,22 +40,24 @@ class Topic extends ForumAppModel {
 	 * @var array
 	 */
 	public $belongsTo = array(
-		'User',
+		'User' => array(
+			'className' => FORUM_USER
+		),
 		'Forum' => array(
-			'className' 	=> 'Forum.Forum',
-			'counterCache' 	=> true
+			'className' => 'Forum.Forum',
+			'counterCache' => true
 		),
 		'FirstPost' => array(
-			'className' 	=> 'Forum.Post',
-			'foreignKey'	=> 'firstPost_id'
+			'className' => 'Forum.Post',
+			'foreignKey' => 'firstPost_id'
 		),
 		'LastPost' => array(
-			'className' 	=> 'Forum.Post',
-			'foreignKey'	=> 'lastPost_id'
+			'className' => 'Forum.Post',
+			'foreignKey' => 'lastPost_id'
 		),
 		'LastUser' => array(
-			'className'		=> 'User',
-			'foreignKey'	=> 'lastUser_id'
+			'className' => FORUM_USER,
+			'foreignKey' => 'lastUser_id'
 		)
 	);
 
@@ -81,13 +82,13 @@ class Topic extends ForumAppModel {
 	 */
 	public $hasMany = array(
 		'Post' => array(
-			'className'	=> 'Forum.Post',
+			'className' => 'Forum.Post',
 			'exclusive' => true,
 			'dependent' => true,
-			'order' 	=> array('Post.created' => 'DESC'),
+			'order' => array('Post.created' => 'DESC'),
 		),
 		'Subscription' => array(
-			'className'	=> 'Forum.Subscription',
+			'className' => 'Forum.Subscription',
 			'exclusive' => true,
 			'dependent' => true
 		)
@@ -134,7 +135,22 @@ class Topic extends ForumAppModel {
     }
 
 
-    /**
+	/**
+	 * Enum.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $enum = array(
+		'type' => array(
+			self::NORMAL => 'NORMAL',
+			self::STICKY => 'STICKY',
+			self::IMPORTANT => 'IMPORTANT',
+			self::ANNOUNCEMENT => 'ANNOUNCEMENT'
+		)
+	);
+
+	/**
 	 * Validate and add a topic.
 	 *
 	 * @access public
@@ -154,8 +170,6 @@ class Topic extends ForumAppModel {
 				return $this->invalidate('title', 'You are only allowed to post %s topic(s) per hour', $this->settings['topics_per_hour']);
 
 			} else {
-				$data['title'] = Sanitize::clean($data['title']);
-
 				$this->create();
 				$this->save($data, false, array('forum_id', 'user_id', 'title', 'slug', 'status', 'type'));
 
@@ -198,9 +212,7 @@ class Topic extends ForumAppModel {
 	 * @return boolean|int
 	 */
 	public function checkFlooding($interval) {
-		$topics = $this->Session->read('Forum.topics');
-
-		if (!empty($topics)) {
+		if ($topics = $this->Session->read('Forum.topics')) {
 			$timeLeft = time() - array_pop($topics);
 
 			if ($timeLeft <= $interval) {
@@ -219,13 +231,12 @@ class Topic extends ForumAppModel {
 	 * @return boolean
 	 */
 	public function checkHourly($max) {
-		$topics = $this->Session->read('Forum.topics');
 		$pastHour = strtotime('-1 hour');
 
-		if (!empty($topics)) {
+		if ($topics = $this->Session->read('Forum.topics')) {
 			$count = 0;
 
-			foreach ($topics as $id => $time) {
+			foreach ($topics as $time) {
 				if ($time >= $pastHour) {
 					++$count;
 				}
@@ -251,7 +262,7 @@ class Topic extends ForumAppModel {
 		$options = explode("\n", $data[0]);
 		$clean = array();
 
-		if (!empty($options)) {
+		if ($options) {
 			foreach ($options as $option) {
 				if ($option !== '') {
 					$clean[] = $option;
@@ -296,18 +307,18 @@ class Topic extends ForumAppModel {
 	 * @return boolean
 	 */
 	public function edit($id, $topic) {
-		if (!empty($topic)) {
+		if ($topic) {
 			foreach ($topic as $model => $data) {
-				if ($model == 'Topic') {
+				if ($model === 'Topic') {
 					$this->id = $id;
 					$this->save($data, false);
 
-				} else if ($model == 'FirstPost') {
+				} else if ($model === 'FirstPost') {
 					$this->Post->id = $data['id'];
 					$this->Post->save($data, false, array('content', 'contentHtml'));
 
-				} else if ($model == 'Poll') {
-					$data['expires'] = !empty($data['expires']) ? date('Y-m-d H:i:s', strtotime('+'. $data['expires'] .' days')) : null;
+				} else if ($model === 'Poll') {
+					$data['expires'] = !empty($data['expires']) ? date('Y-m-d H:i:s', strtotime('+' . $data['expires'] . ' days')) : null;
 
 					$this->Poll->id = $data['id'];
 					$this->Poll->save($data, false, array('expires'));
@@ -337,7 +348,7 @@ class Topic extends ForumAppModel {
 	 * @param string $slug
 	 * @return array
 	 */
-	public function get($slug) {
+	public function getBySlug($slug) {
 		$topic = $this->find('first', array(
 			'conditions' => array('Topic.slug' => $slug),
 			'contain' => array(
@@ -345,7 +356,7 @@ class Topic extends ForumAppModel {
 				'Forum' => array('Parent'),
 				'Poll' => array('PollOption')
 			),
-			'cache' => __FUNCTION__ .'-'. $slug
+			'cache' => array(__METHOD__, $slug)
 		));
 
 		if (!empty($topic['Poll']['id'])) {
@@ -353,19 +364,6 @@ class Topic extends ForumAppModel {
 		}
 
 		return $topic;
-	}
-
-	/**
-	 * Return a topic based on ID.
-	 *
-	 * @access public
-	 * @param int $id
-	 * @return array
-	 */
-	public function getById($id) {
-		return $this->find('first', array(
-			'conditions' => array('Topic.id' => $id)
-		));
 	}
 
 	/**
@@ -380,8 +378,8 @@ class Topic extends ForumAppModel {
 			'order' => array('Topic.created' => 'DESC'),
 			'contain' => array('User', 'LastPost', 'FirstPost'),
 			'limit' => $limit,
-            'page'=>$page,
-			'cache' => array(__FUNCTION__ .'-'. $limit, '+5 minutes')
+			'cache' => array(__METHOD__, $limit),
+			'cacheExpires' => '+1 minute'
 		));
 	}
 
@@ -421,7 +419,8 @@ class Topic extends ForumAppModel {
 					)
 				)
 			),
-			'contain' => array('User', 'LastPost', 'LastUser', 'Poll')
+			'contain' => array('User', 'LastPost', 'LastUser', 'Poll'),
+			'cache' => array(__METHOD__, $forum_id)
 		));
 	}
 
@@ -433,7 +432,7 @@ class Topic extends ForumAppModel {
 	 * @return boolean
 	 */
 	public function increaseViews($id) {
-		return $this->query('UPDATE `'. $this->tablePrefix .'topics` AS `Topic` SET `Topic`.`view_count` = `Topic`.`view_count` + 1 WHERE `Topic`.`id` = '. (int) $id);
+		return $this->query('UPDATE `' . $this->tablePrefix . 'topics` AS `Topic` SET `Topic`.`view_count` = `Topic`.`view_count` + 1 WHERE `Topic`.`id` = ' . (int) $id);
 	}
 
 	/**
@@ -488,7 +487,7 @@ class Topic extends ForumAppModel {
 	 * @return array
 	 */
 	public function afterFind($results, $primary = false) {
-		if (!empty($results)) {
+		if ($results) {
 			$postsPerPage = $this->settings['posts_per_page'];
 			$autoLock = $this->settings['days_till_autolock'];
 
@@ -496,6 +495,7 @@ class Topic extends ForumAppModel {
 				foreach ($results as &$result) {
 					if (isset($result['Topic'])) {
 						$lock = isset($result['Forum']) ? $result['Forum']['settingAutoLock'] : false;
+						$lastTime = null;
 
 						if (isset($result['LastPost'])) {
 							$lastTime = $result['LastPost']['created'];
@@ -507,7 +507,7 @@ class Topic extends ForumAppModel {
 							$result['Topic']['page_count'] = ($result['Topic']['post_count'] > $postsPerPage) ? ceil($result['Topic']['post_count'] / $postsPerPage) : 1;
 						}
 
-						if ($lock && $lastTime && (strtotime($lastTime) < strtotime('-'. $autoLock .' days'))) {
+						if ($lock && $lastTime && (strtotime($lastTime) < strtotime('-' . $autoLock . ' days'))) {
 							$result['Topic']['status'] = 1;
 						}
 					}

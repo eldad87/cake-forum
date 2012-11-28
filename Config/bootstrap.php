@@ -8,59 +8,56 @@
  * @link        http://milesj.me/code/cakephp/forum
  */
 
+//App::uses('ClassRegistry', 'Utility');
+App::uses('Sanitize', 'Utility');
+
+/**
+ * Current version.
+ */
+Configure::write('Forum.version', '3.2.0');
+
+/**
+ * Name of the User model.
+ */
+Configure::write('Forum.userModel', 'User');
+
 /**
  * A map of user fields that are used within this plugin. If your users table has a different naming scheme
  * for the username, email, status, etc fields, you can define their replacement here.
  */
-$config['Forum']['userMap'] = array(
+Configure::write('Forum.userMap', array(
 	'username'	=> 'username',
 	'login'	    => 'email',
 	'password'	=> 'password',
 	'email'		=> 'email',
 	'status'	=> 'active'
-);
+));
 $config['Forum']['site_main_url'] = '/';
 
 /**
  * A map of status values for the users "status" column.
  * This column determines if the user is pending, currently active, or banned.
  */
-$config['Forum']['statusMap'] = array(
+Configure::write('Forum.statusMap', array(
 	'pending'	=> 0,
 	'active'	=> 1,
 	'banned'	=> 2
-);
+));
 
 /**
  * A map of external user management URLs.
  */
-$config['Forum']['routes'] = array(
-	'login' => array('plugin' => false, 'admin' => false, 'controller' => '/', 'action' => 'login'),
-	'logout' => array('plugin' => false, 'admin' => false, 'controller' => '/', 'action' => 'logout'),
-	'signup' => array('plugin' => false, 'admin' => false, 'controller' => '/', 'action' => 'register'),
-	'forgotPass' =>array('plugin' => false, 'admin' => false, 'controller' => '/', 'action' => 'forgotten_password')
-);
-
-/**
- * Load custom configuration if it exists.
- */
-if (file_exists('custom.php')) {
-	include_once 'custom.php';
-}
-
-/***************************************************
- * DO NOT EDIT BELOW
- ***************************************************/
-
-/**
- * Current version.
- */
-$config['Forum']['version'] = '3.1.1';
+Configure::write('Forum.routes', array(
+    'login' => array('plugin' => false, 'admin' => false, 'controller' => '/', 'action' => 'login'),
+    'logout' => array('plugin' => false, 'admin' => false, 'controller' => '/', 'action' => 'logout'),
+    'signup' => array('plugin' => false, 'admin' => false, 'controller' => '/', 'action' => 'register'),
+    'forgotPass' =>array('plugin' => false, 'admin' => false, 'controller' => '/', 'action' => 'forgotten_password')
+));
 
 /**
  * List of all timezones.
  */
-$config['Forum']['timezones'] = array(
+Configure::write('Forum.timezones', array(
 	'-12'	=> '(GMT -12:00) International Date Line West',
 	'-11'	=> '(GMT -11:00) Midway Island',
 	'-10'	=> '(GMT -10:00) Hawaii',
@@ -90,12 +87,12 @@ $config['Forum']['timezones'] = array(
 	'+11'	=> '(GMT +11:00) Solomon Islands, Vanuatu',
 	'+12'	=> '(GMT +12:00) New Zealand, Fiji, Nauru',
 	'+13'	=> '(GMT +13:00) Tonga'
-);
+));
 
 /**
  * List of translated locales.
  */
-$config['Forum']['locales'] = array(
+Configure::write('Forum.locales', array(
 	'eng' => 'English',
 	'spa' => 'Spanish',
 	'swe' => 'Swedish',
@@ -105,9 +102,12 @@ $config['Forum']['locales'] = array(
 	'rus' => 'Russian',
 	'ind' => 'Indonesian',
 	'bul' => 'Bulgarian'*/
-);
+));
 
-$config['Forum']['decodaLocales'] = array(
+/**
+ * List of Cake locales to Decoda locales.
+ */
+Configure::write('Forum.decodaLocales', array(
 	'eng' => 'en-us',
 	'spa' => 'es-mx',
 	'swe' => 'sv-se',
@@ -117,4 +117,9 @@ $config['Forum']['decodaLocales'] = array(
 	'rus' => 'ru-ru',
 	'ind' => 'id-id',
 	'bul' => 'bg-bg'*/
-);
+));
+
+/**
+ * Handle exceptions and errors.
+ */
+Configure::write('Exception.renderer', 'Forum.ForumExceptionRenderer');

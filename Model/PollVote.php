@@ -25,7 +25,9 @@ class PollVote extends ForumAppModel {
 		'PollOption' => array(
 			'className' => 'Forum.PollOption'
 		),
-		'User'
+		'User' => array(
+			'className' => FORUM_USER
+		)
 	);
 
 	/**
@@ -66,7 +68,11 @@ class PollVote extends ForumAppModel {
 			'contain' => false
 		));
 
-		return empty($vote) ? false : $vote['PollVote']['poll_option_id'];
+		if ($vote) {
+			return $vote['PollVote']['poll_option_id'];
+		}
+
+		return false;
 	}
 
 }

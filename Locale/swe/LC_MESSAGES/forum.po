@@ -208,7 +208,7 @@ msgid "Edit Access"
 msgstr "Redigera åtkomst"
 
 #: Controller\StaffController.php:87
-msgid "The access levels for %s have been succesfully removed."
+msgid "The access levels for %s have been successfully removed."
 msgstr "Åtkomsträttigheterna för %s har tagits bort."
 
 #: Controller\StaffController.php:99
@@ -255,7 +255,7 @@ msgid "Edit Moderator"
 msgstr "Redigera moderator"
 
 #: Controller\StaffController.php:220
-msgid "The moderator %s has been succesfully removed!"
+msgid "The moderator %s has been successfully removed!"
 msgstr "Moderator %s har tagits bort."
 
 #: Controller\StationsController.php:105
@@ -359,7 +359,7 @@ msgid "Edit Topic"
 msgstr "Redigera ämne"
 
 #: Controller\TopicsController.php:210
-msgid "You have succesfully reported this topic! A moderator will review this topic and take the necessary action."
+msgid "You have successfully reported this topic! A moderator will review this topic and take the necessary action."
 msgstr "Du har anmält det här ämnet. En moderator kommer att granska ämnet och vidta nödvändiga åtgärder."
 
 #: Controller\TopicsController.php:215
@@ -402,7 +402,7 @@ msgid "User Profile"
 msgstr "Användarprofil"
 
 #: Controller\UsersController.php:157
-msgid "You have succesfully reported this user! A moderator will review this topic and take the necessary action."
+msgid "You have successfully reported this user! A moderator will review this topic and take the necessary action."
 msgstr "Du har anmält användaren. En moderator kommer att granska din anmälan och vidta nödvändiga åtgärder."
 
 #: Controller\UsersController.php:162
@@ -1830,3 +1830,14 @@ msgstr "Postades den"
 msgid "Are you sure you want to report the user %s? If so, please add a comment as to why you are reporting this user, and please be descriptive. Are they spamming, trolling, flaming, etc. 255 max characters."
 msgstr "Är du säker på att du vill anmälda användare %s? Lägg i såna fall till en kommentar om varför du anmäler användare och beskriv sakligt varför. Max 255 tecken."
 
+#: View/Errors/error400.ctp:7
+msgid "Not Found"
+msgstr "Sidan kunde inte hittas"
+
+#: View/Errors/error400.ctp:7
+msgid "Forbidden"
+msgstr "Förbjudna"
+
+#: View/Errors/error400.ctp:7
+msgid "Unauthorized"
+msgstr "Obehörig"

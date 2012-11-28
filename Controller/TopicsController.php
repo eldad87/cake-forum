@@ -26,7 +26,7 @@ class TopicsController extends ForumAppController {
 	 * @access public
 	 * @var array
 	 */
-	public $components = array('Forum.AjaxHandler');
+	public $components = array('Utility.AjaxHandler', 'RequestHandler');
 
 	/**
 	 * Pagination.
@@ -52,7 +52,7 @@ class TopicsController extends ForumAppController {
 	 * @access public
 	 * @var array
 	 */
-	public $helpers = array('Utils.Gravatar');
+	public $helpers = array('Rss');
 
 	/**
 	 * Redirect.
@@ -68,10 +68,10 @@ class TopicsController extends ForumAppController {
 	 * @param string $type
 	 */
 	public function add($slug, $type = '') {
-		$forum = $this->Topic->Forum->get($slug);
+		$forum = $this->Topic->Forum->getBySlug($slug);
 		$user_id = $this->Auth->user('id');
 
-		if ($type == 'poll') {
+		if ($type === 'poll') {
 			$pageTitle = __d('forum', 'Create Poll');
 			$access = 'accessPoll';
 		} else {
@@ -85,8 +85,8 @@ class TopicsController extends ForumAppController {
 			'permission' => $forum['Forum'][$access]
 		));
 
-		if (!empty($this->request->data)) {
-			$this->request->data['Topic']['status'] = 1;
+		if ($this->request->data) {
+			$this->request->data['Topic']['status'] = Topic::STATUS_OPEN;
 			$this->request->data['Topic']['user_id'] = $user_id;
 			$this->request->data['Topic']['userIP'] = $this->request->clientIp();
 
@@ -121,7 +121,7 @@ class TopicsController extends ForumAppController {
 	 * @param string $slug
 	 */
 	public function edit($slug) {
-		$topic = $this->Topic->get($slug);
+		$topic = $this->Topic->getBySlug($slug);
 		$user_id = $this->Auth->user('id');
 
 		$this->ForumToolbar->verifyAccess(array(
@@ -130,10 +130,10 @@ class TopicsController extends ForumAppController {
 			'ownership' => $topic['Topic']['user_id']
 		));
 
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			if ($this->Topic->saveAll($this->request->data, array('validate' => 'only'))) {
 				if ($this->Topic->edit($topic['Topic']['id'], $this->request->data)) {
-					Cache::delete('Topic.get-'. $slug, 'forum');
+					$this->Topic->deleteCache(array('Topic::getBySlug', $slug));
 					$this->ForumToolbar->goToPage($topic['Topic']['id']);
 				}
 			}
@@ -152,45 +152,17 @@ class TopicsController extends ForumAppController {
 	}
 
 	/**
-	 * RSS Feed.
-	 *
-	 * @param string $slug
-	 */
-	public function feed($slug) {
-		if ($this->request->is('rss')) {
-			$topic = $this->Topic->get($slug);
-
-			$this->ForumToolbar->verifyAccess(array(
-				'exists' => $topic
-			));
-
-			$this->paginate['Post']['limit'] = $this->settings['posts_per_page'];
-			$this->paginate['Post']['conditions'] = array('Post.topic_id' => $topic['Topic']['id']);
-			$this->paginate['Post']['contain'] = array('User');
-			$this->paginate['Post']['order'] = array('Post.created' => 'DESC');
-
-			$this->set('items', $this->paginate('Post'));
-			$this->set('topic', $topic);
-			$this->set('document', array('xmlns:dc' => 'http://purl.org/dc/elements/1.1/'));
-		} else {
-			$this->redirect('/forum/topics/feed/'. $slug .'.rss');
-		}
-	}
-
-	/**
 	 * Delete a topic.
 	 *
 	 * @param string $slug
 	 */
 	public function delete($slug) {
-		$topic = $this->Topic->get($slug);
+		$topic = $this->Topic->getBySlug($slug);
 
 		$this->ForumToolbar->verifyAccess(array(
 			'exists' => $topic,
 			'moderate' => $topic['Topic']['forum_id']
 		));
-
-		Cache::delete('Topic.get-'. $slug, 'forum');
 
 		$this->Topic->delete($topic['Topic']['id'], true);
 
@@ -205,20 +177,20 @@ class TopicsController extends ForumAppController {
 	public function report($slug) {
 		$this->loadModel('Forum.Report');
 
-		$topic = $this->Topic->get($slug);
+		$topic = $this->Topic->getBySlug($slug);
 		$user_id = $this->Auth->user('id');
 
 		$this->ForumToolbar->verifyAccess(array(
 			'exists' => $topic
 		));
 
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			$this->request->data['Report']['user_id'] = $user_id;
 			$this->request->data['Report']['item_id'] = $topic['Topic']['id'];
 			$this->request->data['Report']['itemType'] = Report::TOPIC;
 
 			if ($this->Report->save($this->request->data, true, array('item_id', 'itemType', 'user_id', 'comment'))) {
-				$this->Session->setFlash(__d('forum', 'You have succesfully reported this topic! A moderator will review this topic and take the necessary action.'));
+				$this->Session->setFlash(__d('forum', 'You have successfully reported this topic! A moderator will review this topic and take the necessary action.'));
 				unset($this->request->data['Report']);
 			}
 		}
@@ -233,7 +205,7 @@ class TopicsController extends ForumAppController {
 	 * @param string $slug
 	 */
 	public function view($slug) {
-		$topic = $this->Topic->get($slug);
+		$topic = $this->Topic->getBySlug($slug);
 		$user_id = $this->Auth->user('id');
 
 		$this->ForumToolbar->verifyAccess(array(
@@ -241,16 +213,25 @@ class TopicsController extends ForumAppController {
 			'permission' => $topic['Forum']['accessRead']
 		));
 
+		$this->paginate['Post']['limit'] = $this->settings['posts_per_page'];
+		$this->paginate['Post']['conditions'] = array('Post.topic_id' => $topic['Topic']['id']);
+
+		if ($this->RequestHandler->isRss()) {
+			$this->set('posts', $this->paginate('Post'));
+			$this->set('topic', $topic);
+
+			return;
+		}
+
 		if (!empty($this->request->data['Poll']['option'])) {
 			$this->Topic->Poll->vote($topic['Poll']['id'], $this->request->data['Poll']['option'], $user_id);
+			$this->Topic->deleteCache(array('Topic::getBySlug', $slug));
+
 			$this->redirect(array('plugin' => 'forum', 'controller' => 'topics', 'action' => 'view', $slug));
 		}
 
 		$this->ForumToolbar->markAsRead($topic['Topic']['id']);
 		$this->Topic->increaseViews($topic['Topic']['id']);
-
-		$this->paginate['Post']['limit'] = $this->settings['posts_per_page'];
-		$this->paginate['Post']['conditions'] = array('Post.topic_id' => $topic['Topic']['id']);
 
 		$this->ForumToolbar->pageTitle($topic['Forum']['title'], $topic['Topic']['title']);
 
@@ -263,7 +244,7 @@ class TopicsController extends ForumAppController {
 	/**
 	 * Subscribe to a topic.
 	 *
-	 * @param type $id
+	 * @param int $id
 	 */
 	public function subscribe($id) {
 		$success = false;
@@ -283,7 +264,7 @@ class TopicsController extends ForumAppController {
 	/**
 	 * Unsubscribe from a topic.
 	 *
-	 * @param type $id
+	 * @param int $id
 	 */
 	public function unsubscribe($id) {
 		$success = false;
@@ -306,7 +287,7 @@ class TopicsController extends ForumAppController {
 	 * @param string $slug
 	 */
 	public function moderate($slug) {
-		$topic = $this->Topic->get($slug);
+		$topic = $this->Topic->getBySlug($slug);
 		$user_id = $this->Auth->user('id');
 
 		$this->ForumToolbar->verifyAccess(array(
@@ -318,10 +299,11 @@ class TopicsController extends ForumAppController {
 		if (!empty($this->request->data['Post']['items'])) {
 			$items = $this->request->data['Post']['items'];
 			$action = $this->request->data['Post']['action'];
+			$message = null;
 
 			foreach ($items as $post_id) {
 				if (is_numeric($post_id)) {
-					if ($action == 'delete') {
+					if ($action === 'delete') {
 						$this->Topic->Post->delete($post_id, true);
 						$message = __d('forum', 'A total of %d post(s) have been permanently deleted');
 					}

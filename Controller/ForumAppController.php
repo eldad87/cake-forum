@@ -8,10 +8,10 @@
  * @link        http://milesj.me/code/cakephp/forum
  */
 
+if (!defined('FORUM_USER')) {
+	define('FORUM_USER', Configure::read('Forum.userModel'));
+}
 App::uses('ClassRegistry', 'Utility');
-App::uses('Sanitize', 'Utility');
-
-Configure::load('Forum.config');
 Configure::write('Forum.settings', ClassRegistry::init('Forum.Setting')->getSettings());
 
 class ForumAppController extends AppController {
@@ -38,7 +38,23 @@ class ForumAppController extends AppController {
 	 * @access public
 	 * @var array
 	 */
-	public $helpers = array('Html', 'Session', 'Form', 'Time', 'Text', 'Forum.Common');
+	public $helpers = array('Html', 'Session', 'Form', 'Time', 'Text', 'Forum.Common', 'Utility.Breadcrumb', 'Utility.OpenGraph');
+
+	/**
+	 * Plugin configuration.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $config = array();
+
+	/**
+	 * Database forum settings.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $settings = array();
 
 	/**
 	 * Run auto login logic.
@@ -59,7 +75,10 @@ class ForumAppController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 
-		if (isset($this->params['admin'])) {
+		$this->set('menuTab', '');
+
+		// Admin
+		if (isset($this->request->params['admin'])) {
 			$this->ForumToolbar->verifyAdmin();
 			$this->layout = 'admin';
 		}
@@ -113,7 +132,7 @@ class ForumAppController extends AppController {
 	public function beforeRender() {
 		$user = $this->Auth->user();
 
-		if (!empty($user)) {
+		if ($user) {
 			$user = array('User' => $user);
 		}
 

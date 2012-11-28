@@ -21,9 +21,31 @@ class ForumController extends ForumAppController {
 	public $uses = array('Forum.Topic', 'Forum.Profile');
 
 	/**
+	 * Components.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $components = array('RequestHandler');
+
+	/**
+	 * Helpers.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $helpers = array('Rss');
+
+	/**
 	 * Forum index.
 	 */
 	public function index() {
+		if ($this->RequestHandler->isRss()) {
+			$this->set('items', $this->Topic->getLatest());
+
+			return;
+		}
+
 		$this->ForumToolbar->pageTitle(__d('forum', 'Index'));
 		$this->set('menuTab', 'forums');
 		$this->set('forums', 		$this->Topic->Forum->getIndex());
@@ -32,18 +54,6 @@ class ForumController extends ForumAppController {
 		$this->set('totalUsers', 	$this->Profile->getTotal());
 		$this->set('newestUser', 	$this->Profile->getNewestUser());
 		$this->set('whosOnline', 	$this->Profile->whosOnline());
-	}
-
-	/**
-	 * RSS Feed.
-	 */
-	public function feed() {
-		if ($this->request->is('rss')) {
-			$this->set('items', $this->Topic->getLatest());
-			$this->set('document', array('xmlns:dc' => 'http://purl.org/dc/elements/1.1/'));
-		} else {
-			$this->redirect('/forum/feed/feed.rss');
-		}
 	}
 
 	/**
@@ -100,11 +110,12 @@ class ForumController extends ForumAppController {
 	public function admin_settings() {
 		$this->loadModel('Forum.Setting');
 
-		if (!empty($this->request->data)) {
-			if ($this->Setting->update($this->request->data)) {
+		if ($this->request->data) {
+			if ($this->Setting->updateSettings($this->request->data)) {
 				$this->Session->setFlash(__d('forum', 'Settings have been updated!'));
 
-				Cache::delete('Setting.getSettings', 'forum');
+				$this->Setting->deleteCache('Setting::getSettings');
+
 				Configure::write('Forum.settings', $this->request->data['Setting']);
 			}
 		} else {

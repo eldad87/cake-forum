@@ -23,14 +23,16 @@ class Post extends ForumAppModel {
 	 */
 	public $belongsTo = array(
 		'Forum' => array(
-			'className' 	=> 'Forum.Forum',
-			'counterCache' 	=> true
+			'className' => 'Forum.Forum',
+			'counterCache' => true
 		),
 		'Topic' => array(
-			'className'		=> 'Forum.Topic',
-			'counterCache'	=> true
+			'className' => 'Forum.Topic',
+			'counterCache' => true
 		),
-		'User'
+		'User' => array(
+			'className' => FORUM_USER
+		)
 	);
 
     public $actsAs = array(
@@ -113,6 +115,7 @@ class Post extends ForumAppModel {
 	 */
 	public function addFirstPost($data) {
 		$this->create();
+
 		$this->save(array(
 			'topic_id' => $data['topic_id'],
 			'forum_id' => $data['forum_id'],
@@ -132,9 +135,7 @@ class Post extends ForumAppModel {
 	 * @return boolean
 	 */
 	public function checkFlooding($interval) {
-		$posts = $this->Session->read('Forum.posts');
-
-		if (!empty($posts)) {
+		if ($posts = $this->Session->read('Forum.posts')) {
 			$timeLeft = time() - array_pop($posts);
 
 			if ($timeLeft <= $interval) {
@@ -153,13 +154,12 @@ class Post extends ForumAppModel {
 	 * @return boolean
 	 */
 	public function checkHourly($max) {
-		$posts = $this->Session->read('Forum.posts');
 		$pastHour = strtotime('-1 hour');
 
-		if (!empty($posts)) {
+		if ($posts = $this->Session->read('Forum.posts')) {
 			$count = 0;
 
-			foreach ($posts as $id => $time) {
+			foreach ($posts as $time) {
 				if ($time >= $pastHour) {
 					++$count;
 				}
@@ -180,13 +180,14 @@ class Post extends ForumAppModel {
 	 * @param int $id
 	 * @return array
 	 */
-	public function get($id) {
+	public function getById($id) {
 		return $this->find('first', array(
 			'conditions' => array('Post.id' => $id),
 			'contain' => array(
 				'Topic', 'User',
 				'Forum' => array('Parent')
-			)
+			),
+			'cache' => array(__METHOD__, $id)
 		));
 	}
 
@@ -241,7 +242,8 @@ class Post extends ForumAppModel {
 			'contain' => array(
 				'Topic' => array('LastUser', 'LastPost', 'User')
 			),
-			'cache' => array(__FUNCTION__ . '-' . $user_id . '-' . $limit, '+5 minutes')
+			'cache' => array(__METHOD__, $user_id, $limit),
+			'cacheExpires' => '+5 minutes'
 		));
 	}
 
@@ -305,7 +307,7 @@ class Post extends ForumAppModel {
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function beforeSave($options=array()) {
+	public function beforeSave($options = array()) {
 		if (isset($this->data['Post']['content'])) {
 			return $this->validateDecoda('Post');
 		}

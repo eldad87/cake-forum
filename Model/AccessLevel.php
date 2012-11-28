@@ -22,6 +22,18 @@ class AccessLevel extends ForumAppModel {
 	const ADMIN = 10;
 
 	/**
+	 * Behaviors.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $actsAs = array(
+		'Utility.Filterable' => array(
+			'title' => array('strip' => true)
+		)
+	);
+
+	/**
 	 * Validation.
 	 *
 	 * @access public
@@ -30,6 +42,23 @@ class AccessLevel extends ForumAppModel {
 	public $validate = array(
 		'level' => 'notEmpty',
 		'title' => 'notEmpty'
+	);
+
+	/**
+	 * Enum.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $enum = array(
+		'isSuper' => array(
+			self::BOOL_NO => 'NO',
+			self::BOOL_YES => 'YES'
+		),
+		'isAdmin' => array(
+			self::BOOL_NO => 'NO',
+			self::BOOL_YES => 'YES'
+		)
 	);
 
 	/**
@@ -60,7 +89,8 @@ class AccessLevel extends ForumAppModel {
 	 */
 	public function getList() {
 		return $this->find('all', array(
-			'order' => array('AccessLevel.level' => 'ASC')
+			'order' => array('AccessLevel.level' => 'ASC'),
+			'cache' => __METHOD__
 		));
 	}
 

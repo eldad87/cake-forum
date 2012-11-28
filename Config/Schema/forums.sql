@@ -7,6 +7,8 @@ CREATE TABLE `forum_forums` (
 	`access_level_id` INT(11) DEFAULT '0',
 	`title` VARCHAR(100) NOT NULL,
 	`slug` VARCHAR(115) NOT NULL,
+	`deep` int(11) DEFAULT '1',
+    `path` text,
 	`description` VARCHAR(255) NOT NULL,
 	`status` SMALLINT(6) NOT NULL DEFAULT '1',
 	`orderNo` SMALLINT(6) NOT NULL DEFAULT '0',
@@ -31,6 +33,7 @@ CREATE TABLE `forum_forums` (
 	KEY `access_level_id` (`access_level_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Forum categories to post topics to' AUTO_INCREMENT=1;
 
-INSERT INTO `forum_forums` (`id`, `forum_id`, `access_level_id`, `title`, `slug`, `description`, `status`, `orderNo`, `topic_count`, `post_count`, `accessRead`, `accessPost`, `accessReply`, `accessPoll`, `settingPostCount`, `settingAutoLock`, `lastTopic_id`, `lastPost_id`, `lastUser_id`, `created`, `modified`) VALUES
-	(1, 0, 0, 'Cupcake Forums', 'cupcake-forums', 'This is a primary forum and it contains child forums. Primary forums (no parents) can not be posted in.', 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, NOW(), NOW()),
-	(2, 1, 0, 'General Discussion', 'general-discussion', 'This is a child forum. You can add, edit or delete these forums by visiting the administration panel, but first you would need to give a user admin rights.', 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, NOW(), NOW());
+
+INSERT INTO `{prefix}forums` (`id`, `forum_id`, `access_level_id`, `title`, `slug`, `description`, `status`, `orderNo`, `topic_count`, `post_count`, `accessRead`, `accessPost`, `accessReply`, `accessPoll`, `settingPostCount`, `settingAutoLock`, `lastTopic_id`, `lastPost_id`, `lastUser_id`, `created`, `modified`) VALUES
+	(1, 0, 0, 'Forums', 'forums', 'This is a primary forum and it contains child forums. Primary forums (no parents) can not be posted in.', 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, NOW(), NOW()),
+	(2, 1, 0, 'General Discussion', 'general-discussion', 'This is a child forum. You can add, edit or delete these forums by visiting the administration panel, but first you would need to give a user admin rights.', 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, NOW(), NOW());

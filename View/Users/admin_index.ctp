@@ -1,16 +1,14 @@
-<?php 
+<?php
 
-$this->Html->addCrumb(__d('forum', 'Administration'), array('controller' => 'forum', 'action' => 'index'));
-$this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'action' => 'index')); ?>
+$this->Breadcrumb->add(__d('forum', 'Administration'), array('controller' => 'forum', 'action' => 'index'));
+$this->Breadcrumb->add(__d('forum', 'Users'), array('controller' => 'users', 'action' => 'index')); ?>
 
-<?php echo $this->Form->create('Profile', array(
-	'url' => array('controller' => 'users')
-)); ?>
+<?php echo $this->Form->create('Profile'); ?>
 
 <div class="filter">
     <?php echo __d('forum', 'Search Users'); ?>
-	<?php echo $this->Form->input('username', array('div' => false, 'label' => '('. __d('forum', 'Username') .'): ')); ?>
-	<?php echo $this->Form->input('id', array('div' => false, 'label' => '('. __d('forum', 'ID') .'): ', 'type' => 'text', 'class' => 'numeric')); ?>
+	<?php echo $this->Form->input('username', array('div' => false, 'label' => '(' . __d('forum', 'Username') . '): ')); ?>
+	<?php echo $this->Form->input('id', array('div' => false, 'label' => '(' . __d('forum', 'ID') . '): ', 'type' => 'text', 'class' => 'numeric')); ?>
 	<?php echo $this->Form->submit(__d('forum', 'Search'), array('div' => false, 'class' => 'buttonSmall')); ?>
 </div>
 
@@ -40,7 +38,7 @@ $this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'act
 			</thead>
 			<tbody>
 
-			<?php if (!empty($users)) {
+			<?php if ($users) {
 				foreach ($users as $counter => $user) { ?>
 
 				<tr<?php if ($counter % 2) echo ' class="altRow"'; ?>>
@@ -53,7 +51,7 @@ $this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'act
 						<?php if (!empty($user['User']['lastLogin'])) {
 							echo $this->Time->timeAgoInWords($user['User']['lastLogin'], array('userOffset' => $this->Common->timezone()));
 						} else {
-							echo '<em class="gray">'. __d('forum', 'Never') .'</em>';
+							echo '<em class="gray">' . __d('forum', 'Never') . '</em>';
 						} ?>
 					</td>
 					<td class="stat"><?php echo number_format($user['Profile']['totalTopics']); ?></td>
@@ -77,4 +75,4 @@ $this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'act
 
 		<?php echo $this->element('pagination'); ?>
 	</div>
-</div>	
+</div>

@@ -9,7 +9,7 @@
  */
 
 Configure::write('debug', 2);
-Configure::load('Forum.config');
+Configure::write('Cache.disable', true);
 
 App::uses('ConnectionManager', 'Model');
 
@@ -52,7 +52,7 @@ class UpgradeShell extends Shell {
 	 * @var array
 	 */
 	public $versions = array(
-		//'2.2' => 'Subscriptions'
+		'2.2' => 'Subscriptions'
 	);
 
 	/**
@@ -63,21 +63,13 @@ class UpgradeShell extends Shell {
 	 */
 	public function main() {
 		$this->config = Configure::read('Forum');
-
-		// Get values from AppModel
-		$appModel = file_get_contents(FORUM_PLUGIN . 'Model/ForumAppModel.php');
-
-		$prefix = preg_match('/public \$tablePrefix = \'(.*?)\';/', $appModel, $matches);
-		$this->upgrade['prefix'] = $matches[1];
-
-		$dbConfig = preg_match('/public \$useDbConfig = \'(.*?)\';/', $appModel, $matches);
-		$this->upgrade['database'] = $matches[1];
+		$this->upgrade = parse_ini_file(FORUM_PLUGIN  . 'Config/install.ini', true);
 
 		// Begin
 		$this->out();
 		$this->out('Plugin: Forum');
 		$this->out('Version: ' . $this->config['version']);
-		$this->out('Copyright: Miles Johnson, 2010-'. date('Y'));
+		$this->out('Copyright: Miles Johnson, 2010-' . date('Y'));
 		$this->out('Help: http://milesj.me/code/cakephp/forum');
 		$this->out('Shell: Upgrade');
 		$this->out();
@@ -97,7 +89,7 @@ class UpgradeShell extends Shell {
 
 		$versions = array();
 
-		if (!empty($this->versions)) {
+		if ($this->versions) {
 			foreach ($this->versions as $version => $title) {
 				if (!in_array($version, $this->complete)) {
 					$this->out(sprintf('[%s] %s', $version, $title));
@@ -107,11 +99,12 @@ class UpgradeShell extends Shell {
 		}
 
 		$this->out('[E]xit');
+		$this->out();
 
 		$versions[] = 'E';
-		$version = strtoupper($this->in('Which version do you want to upgrade to?', $versions));
+		$version = strtoupper($this->in('Which version do you want to upgrade to?'));
 
-		if ($version == 'E') {
+		if ($version === 'E') {
 			exit(0);
 		} else {
 			$this->hr(1);

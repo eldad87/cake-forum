@@ -1,12 +1,11 @@
-<?php 
+<?php
 
-$this->Html->addCrumb($settings['site_name'], array('controller' => 'forum', 'action' => 'index'));
-$this->Html->addCrumb(__d('forum', 'Users'), array('controller' => 'users', 'action' => 'index'));
-$this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->here); ?>
+$this->Breadcrumb->add(__d('forum', 'Users'), array('controller' => 'users', 'action' => 'index'));
+$this->Breadcrumb->add($profile['User'][$config['userMap']['username']], array('action' => 'profile', $profile['User']['id'])); ?>
 
 <div class="title">
 	<?php echo $this->Html->link(__d('forum', 'Report User'), array('action' => 'report', $profile['User']['id']), array('class' => 'button float-right')); ?>
-	<h2><?php echo $profile['User'][$config['userMap']['username']]; ?></h2>
+	<h2><?php echo h($profile['User'][$config['userMap']['username']]); ?></h2>
 </div>
 
 <?php if (!empty($profile['Profile']['signatureHtml'])) { ?>
@@ -19,7 +18,7 @@ $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->h
 			<tr>
 				<?php if ($settings['enable_gravatar']) { ?>
 					<td rowspan="2" style="width: 80px;">
-						<?php echo $this->Gravatar->image($profile['User'][$config['userMap']['email']]); ?>
+						<?php echo $this->Common->gravatar($profile['User'][$config['userMap']['email']]); ?>
 					</td>
 				<?php } ?>
 
@@ -28,17 +27,17 @@ $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->h
 
 				<td><strong><?php echo __d('forum', 'Total Topics'); ?>:</strong></td>
 				<td><?php echo number_format($profile['Profile']['totalTopics']); ?></td>
-				
+
 				<td><strong><?php echo __d('forum', 'Roles'); ?>:</strong></td>
 				<td>
-					<?php if (!empty($profile['User']['Access'])) { 
+					<?php if ($profile['User']['Access']) {
 						$roles = array();
 						foreach ($profile['User']['Access'] as $access) {
 							$roles[] = $access['AccessLevel']['title'];
 						}
 						echo implode(', ', $roles);
 					} else {
-						echo '<em>'. __d('forum', 'N/A') .'</em>';
+						echo '<em>' . __d('forum', 'N/A') . '</em>';
 					} ?>
 				</td>
 			</tr>
@@ -48,7 +47,7 @@ $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->h
 					<?php if (!empty($profile['User']['lastLogin'])) {
 						echo $this->Time->timeAgoInWords($profile['User']['lastLogin'], array('userOffset' => $this->Common->timezone()));
 					} else {
-						echo '<em>'. __d('forum', 'Never') .'</em>';
+						echo '<em>' . __d('forum', 'Never') . '</em>';
 					} ?>
 				</td>
 
@@ -57,28 +56,28 @@ $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->h
 
 				<td><strong><?php echo __d('forum', 'Moderates'); ?>:</strong></td>
 				<td>
-					<?php if (!empty($profile['User']['Moderator'])) { 
+					<?php if ($profile['User']['Moderator']) {
 						$mods = array();
 						foreach ($profile['User']['Moderator'] as $mod) {
 							$mods[] = $this->Html->link($mod['Forum']['title'], array('controller' => 'stations', 'action' => 'view', $mod['Forum']['slug']));
 						}
 						echo implode(', ', $mods);
 					} else {
-						echo '<em>'. __d('forum', 'N/A') .'</em>';
+						echo '<em>' . __d('forum', 'N/A') . '</em>';
 					} ?>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 </div>
-	
-<?php if (!empty($topics)) { ?>
-	
+
+<?php if ($topics) { ?>
+
 <div class="container">
 	<div class="containerHeader">
 		<h3><?php echo __d('forum', 'Latest Topics'); ?></h3>
 	</div>
-	
+
 	<div class="containerContent">
 		<table class="table">
 			<thead>
@@ -107,17 +106,17 @@ $this->Html->addCrumb($profile['User'][$config['userMap']['username']], $this->h
 			</tbody>
 		</table>
 	</div>
-</div>   
-	
+</div>
+
 <?php }
 
-if (!empty($posts)) { ?>
-	
+if ($posts) { ?>
+
 <div class="container">
 	<div class="containerHeader">
 		<h3><?php echo __d('forum', 'Latest Posts'); ?></h3>
 	</div>
-	
+
 	<div class="containerContent">
 		<table class="table">
 			<thead>
@@ -128,7 +127,7 @@ if (!empty($posts)) { ?>
 				</tr>
 			</thead>
 			<tbody>
-				
+
 			<?php foreach($posts as $post) { ?>
 
 				<tr class="altRow">
@@ -144,7 +143,7 @@ if (!empty($posts)) { ?>
 
 			</tbody>
 		</table>
-	</div>    
+	</div>
 </div>
-	
+
 <?php } ?>

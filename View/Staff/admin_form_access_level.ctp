@@ -1,6 +1,6 @@
 <?php
 
-if ($method == 'add') {
+if ($method === 'add') {
 	$action = 'add_access_level';
 	$button = __d('forum', 'Save');
 	$title = __d('forum', 'Add Access Level');
@@ -10,26 +10,24 @@ if ($method == 'add') {
 	$title = __d('forum', 'Edit Access Level');
 }
 
-$this->Html->addCrumb(__d('forum', 'Administration'), array('controller' => 'forum', 'action' => 'index'));
-$this->Html->addCrumb(__d('forum', 'Staff'), array('controller' => 'staff', 'action' => 'index'));
-$this->Html->addCrumb($title, $this->here); ?>
+$this->Breadcrumb->add(__d('forum', 'Administration'), array('controller' => 'forum', 'action' => 'index'));
+$this->Breadcrumb->add(__d('forum', 'Staff'), array('controller' => 'staff', 'action' => 'index'));
+$this->Breadcrumb->add($title, $this->here); ?>
 
 <div class="title">
 	<h2><?php echo $title; ?></h2>
 </div>
 
-<?php if ($method == 'edit' && $this->data['AccessLevel']['id'] <= 4) { ?>
+<?php if ($method === 'edit' && $this->data['AccessLevel']['id'] <= 4) { ?>
 
 	<p><?php echo __d('forum', 'You are unable to edit core levels, they are restricted.'); ?></p>
 
 <?php } else {
-	echo $this->Form->create('AccessLevel', array(
-		'url' => array('controller' => 'staff')
-	)); ?>
-	
+	echo $this->Form->create('AccessLevel'); ?>
+
 <div class="container">
 	<div class="containerContent">
-		<?php	
+		<?php
 		echo $this->Form->input('title', array('label' => __d('forum', 'Title')));
 		echo $this->Form->input('level', array('options' => $this->Common->options('access'), 'label' => __d('forum', 'Access Level'), 'empty' => false));
 		echo $this->Form->input('isSuper', array('options' => $this->Common->options('status'), 'label' => __d('forum', 'Is Super Moderator?'), 'empty' => false));

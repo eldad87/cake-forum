@@ -34,7 +34,7 @@ class PostsController extends ForumAppController {
 	 * @param int $quote_id
 	 */
 	public function add($slug, $quote_id = null) {
-		$topic = $this->Post->Topic->get($slug);
+		$topic = $this->Post->Topic->getBySlug($slug);
 		$user_id = $this->Auth->user('id');
 
 		$this->ForumToolbar->verifyAccess(array(
@@ -43,7 +43,7 @@ class PostsController extends ForumAppController {
 			'permission' => $topic['Forum']['accessReply']
 		));
 
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			$this->request->data['Post']['forum_id'] = $topic['Topic']['forum_id'];
 			$this->request->data['Post']['topic_id'] = $topic['Topic']['id'];
 			$this->request->data['Post']['user_id'] = $user_id;
@@ -59,10 +59,8 @@ class PostsController extends ForumAppController {
 			}
 		} else {
 			if ($quote_id) {
-				$quote = $this->Post->getQuote($quote_id);
-
-				if (!empty($quote)) {
-					$this->request->data['Post']['content'] = '[quote="'. $quote['User'][$this->config['userMap']['username']] .'" date="'. $quote['Post']['created'] .'"]'. $quote['Post']['content'] .'[/quote]';
+				if ($quote = $this->Post->getQuote($quote_id)) {
+					$this->request->data['Post']['content'] = '[quote="' . $quote['User'][$this->config['userMap']['username']] . '" date="' . $quote['Post']['created'] . '"]' . $quote['Post']['content'] . '[/quote]';
 				}
 			}
 		}
@@ -78,7 +76,7 @@ class PostsController extends ForumAppController {
 	 * @param int $id
 	 */
 	public function edit($id) {
-		$post = $this->Post->get($id);
+		$post = $this->Post->getById($id);
 		$user_id = $this->Auth->user('id');
 
 		$this->ForumToolbar->verifyAccess(array(
@@ -87,7 +85,7 @@ class PostsController extends ForumAppController {
 			'ownership' => $post['Post']['user_id']
 		));
 
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			$this->Post->id = $id;
 
 			if ($this->Post->save($this->request->data, true, array('content', 'contentHtml'))) {
@@ -107,7 +105,7 @@ class PostsController extends ForumAppController {
 	 * @param int $id
 	 */
 	public function delete($id) {
-		$post = $this->Post->get($id);
+		$post = $this->Post->getById($id);
 
 		$this->ForumToolbar->verifyAccess(array(
 			'exists' => $post,
@@ -127,14 +125,14 @@ class PostsController extends ForumAppController {
 	public function report($id) {
 		$this->loadModel('Forum.Report');
 
-		$post = $this->Post->get($id);
+		$post = $this->Post->getById($id);
 		$user_id = $this->Auth->user('id');
 
 		$this->ForumToolbar->verifyAccess(array(
 			'exists' => $post
 		));
 
-		if (!empty($this->request->data)) {
+		if ($this->request->data) {
 			$this->request->data['Report']['user_id'] = $user_id;
 			$this->request->data['Report']['item_id'] = $id;
 			$this->request->data['Report']['itemType'] = Report::POST;

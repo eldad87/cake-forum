@@ -20,14 +20,12 @@ class Forum extends ForumAppModel {
 	 * @var array
 	 */
 	public $actsAs = array(
-		'Utils.Sluggable' => array(
-			'separator' => '-',
-			'update' => true
+        'Utility.Sluggable' => array(
+			'length' => 100
 		),
         'Pathable' => array(
             'parent_field'  => 'forum_id'
         ),
-        'AutoTranslate'=>array('title', 'description')
 	);
 
 	/**
@@ -38,24 +36,24 @@ class Forum extends ForumAppModel {
 	 */
 	public $belongsTo = array(
 		'Parent' => array(
-			'className'		=> 'Forum.Forum',
-			'foreignKey'	=> 'forum_id',
-			'fields'		=> array('Parent.id', 'Parent.title', 'Parent.slug', 'Parent.forum_id')
+			'className' => 'Forum.Forum',
+			'foreignKey' => 'forum_id',
+			'fields' => array('Parent.id', 'Parent.title', 'Parent.slug', 'Parent.forum_id')
 		),
 		'LastTopic' => array(
-			'className' 	=> 'Forum.Topic',
-			'foreignKey'	=> 'lastTopic_id'
+			'className' => 'Forum.Topic',
+			'foreignKey' => 'lastTopic_id'
 		),
 		'LastPost' => array(
-			'className' 	=> 'Forum.Post',
-			'foreignKey'	=> 'lastPost_id'
+			'className' => 'Forum.Post',
+			'foreignKey' => 'lastPost_id'
 		),
 		'LastUser' => array(
-			'className'		=> 'User',
-			'foreignKey'	=> 'lastUser_id'
+			'className' => FORUM_USER,
+			'foreignKey' => 'lastUser_id'
 		),
 		'AccessLevel' => array(
-			'className' 	=> 'Forum.AccessLevel'
+			'className' => 'Forum.AccessLevel'
 		)
 	);
 
@@ -67,30 +65,30 @@ class Forum extends ForumAppModel {
 	 */
 	public $hasMany = array(
 		'Topic' => array(
-			'className'		=> 'Forum.Topic',
-			'dependent'		=> false
+			'className' => 'Forum.Topic',
+			'dependent' => false
 		),
 		'Children' => array(
-			'className' 	=> 'Forum.Forum',
-			'foreignKey' 	=> 'forum_id',
-			'order' 		=> array('Children.orderNo' => 'ASC'),
-			'dependent'		=> false
+			'className' => 'Forum.Forum',
+			'foreignKey' => 'forum_id',
+			'order' => array('Children.orderNo' => 'ASC'),
+			'dependent' => false
 		),
 		'SubForum' => array(
-			'className' 	=> 'Forum.Forum',
-			'foreignKey' 	=> 'forum_id',
-			'order' 		=> array('SubForum.orderNo' => 'ASC'),
-			'dependent'		=> false
+			'className' => 'Forum.Forum',
+			'foreignKey' => 'forum_id',
+			'order' => array('SubForum.orderNo' => 'ASC'),
+			'dependent' => false
 		),
 		'Moderator' => array(
-			'className'		=> 'Forum.Moderator',
-			'dependent'		=> true,
-			'exclusive'		=> true
+			'className' => 'Forum.Moderator',
+			'dependent' => true,
+			'exclusive' => true
 		),
 		'Subscription' => array(
-			'className'		=> 'Forum.Subscription',
-			'exclusive'		=> true,
-			'dependent'		=> true
+			'className' => 'Forum.Subscription',
+			'exclusive' => true,
+			'dependent' => true
 		)
 	);
 
@@ -113,14 +111,30 @@ class Forum extends ForumAppModel {
 				'message' => 'This setting is required'
 			)
 		),
-        /*'title_he_il' => 'notEmpty',
-        'description_he_il' => 'notEmpty',*/
 	);
+
 
     public $translateModel = 'Forum.Forumi18n';
     public $translateTable = 'forums_i18n';
 
-        /**
+	/**
+	 * Enum.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $enum = array(
+		'settingPostCount' => array(
+			self::BOOL_NO => 'NO',
+			self::BOOL_YES => 'YES'
+		),
+		'settingAutoLock' => array(
+			self::BOOL_NO => 'NO',
+			self::BOOL_YES => 'YES'
+		)
+	);
+
+	/**
 	 * Update all forums by going up the parent chain.
 	 *
 	 * @access public
@@ -146,7 +160,7 @@ class Forum extends ForumAppModel {
 	 * @param string $slug
 	 * @return array
 	 */
-	public function get($slug) {
+	public function getBySlug($slug) {
 		$access = $this->access();
 		$accessLevels = $this->accessLevels();
 
@@ -167,20 +181,7 @@ class Forum extends ForumAppModel {
 				),
 				'Moderator' => array('User')
 			),
-			'cache' => __FUNCTION__ .'-'. $slug
-		));
-	}
-
-	/**
-	 * Return a forum based on ID.
-	 *
-	 * @acccess public
-	 * @param int $id
-	 * @return array
-	 */
-	public function getById($id) {
-		return $this->find('first', array(
-			'conditions' => array('Forum.id' => $id)
+			'cache' => array(__METHOD__, $slug)
 		));
 	}
 
@@ -212,7 +213,7 @@ class Forum extends ForumAppModel {
 		if ($type) {
 			$conditions = array(
 				'Forum.status' => self::STATUS_OPEN,
-				'Forum.'. $type .' <=' => $this->access(),
+				'Forum.' . $type . ' <=' => $this->access(),
 				'Forum.access_level_id' => $this->accessLevels()
 			);
 		}
@@ -368,7 +369,7 @@ class Forum extends ForumAppModel {
 					'LastTopic', 'LastPost', 'LastUser'
 				)
 			),
-			'cache' => __FUNCTION__
+			'cache' => __METHOD__
 		));
 	}
 
@@ -399,9 +400,9 @@ class Forum extends ForumAppModel {
 			unset($data['_Token']);
 		}
 
-		if (!empty($data)) {
+		if ($data) {
 			foreach ($data as $model => $fields) {
-				foreach ($fields as $id => $field) {
+				foreach ($fields as $field) {
 					$order = $field['orderNo'];
 
 					if (!is_numeric($order)) {
@@ -440,7 +441,7 @@ class Forum extends ForumAppModel {
 				if (isset($categories[$child['id']]) && $drill) {
 					$babies = $this->_buildOptions($categories, $child, $drill, ($depth + 1));
 
-					if (!empty($babies)) {
+					if ($babies) {
 						$options = $options + $babies;
 					}
 				}

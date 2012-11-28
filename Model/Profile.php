@@ -21,7 +21,11 @@ class Profile extends ForumAppModel {
 	 * @access public
 	 * @var array
 	 */
-	public $belongsTo = array('User');
+	public $belongsTo = array(
+		'User' => array(
+			'className' => FORUM_USER
+		)
+	);
 
 	/**
 	 * Validate.
@@ -59,10 +63,11 @@ class Profile extends ForumAppModel {
 	 * @param int $id
 	 * @return array
 	 */
-	public function get($id) {
+	public function getById($id) {
 		return $this->find('first', array(
 			'conditions' => array('Profile.id' => $id),
-			'contain' => array('User')
+			'contain' => array('User'),
+			'cache' => array(__METHOD__, $id)
 		));
 	}
 
@@ -96,7 +101,8 @@ class Profile extends ForumAppModel {
 		return $this->find('all', array(
 			'order' => array('User.created' => 'DESC'),
 			'contain' => array('User'),
-			'limit' => $limit
+			'limit' => $limit,
+			'cache' => array(__METHOD__, $limit)
 		));
 	}
 
@@ -110,7 +116,8 @@ class Profile extends ForumAppModel {
 		return $this->find('first', array(
 			'order' => array('User.created' => 'DESC'),
 			'contain' => array('User'),
-			'limit' => 1
+			'limit' => 1,
+			'cache' => __METHOD__
 		));
 	}
 
@@ -127,7 +134,7 @@ class Profile extends ForumAppModel {
 			'contain' => array('User')
 		));
 
-		if (empty($profile) && $user_id) {
+		if (!$profile && $user_id) {
 			$this->create();
 			$this->save(array('user_id' => $user_id), false);
 
@@ -148,7 +155,7 @@ class Profile extends ForumAppModel {
 	 * @return boolean
 	 */
 	public function increasePosts($user_id) {
-		return $this->query('UPDATE `'. $this->tablePrefix .'profiles` AS `Profile` SET `Profile`.`totalPosts` = `Profile`.`totalPosts` + 1 WHERE `Profile`.`user_id` = '. (int) $user_id);
+		return $this->query('UPDATE `' . $this->tablePrefix . 'profiles` AS `Profile` SET `Profile`.`totalPosts` = `Profile`.`totalPosts` + 1 WHERE `Profile`.`user_id` = ' . (int) $user_id);
 	}
 
 	/**
@@ -159,7 +166,7 @@ class Profile extends ForumAppModel {
 	 * @return boolean
 	 */
 	public function increaseTopics($user_id) {
-		return $this->query('UPDATE `'. $this->tablePrefix .'profiles` AS `Profile` SET `Profile`.`totalTopics` = `Profile`.`totalTopics` + 1 WHERE `Profile`.`user_id` = '. (int) $user_id);
+		return $this->query('UPDATE `' . $this->tablePrefix . 'profiles` AS `Profile` SET `Profile`.`totalTopics` = `Profile`.`totalTopics` + 1 WHERE `Profile`.`user_id` = ' . (int) $user_id);
 	}
 
 	/**
@@ -178,6 +185,7 @@ class Profile extends ForumAppModel {
 				'lastLogin' => $profile['Profile']['currentLogin']
 			), false);
 		}
+		return false;
 	}*/
 
 	/**
@@ -193,9 +201,10 @@ class Profile extends ForumAppModel {
 		}
 
 		return $this->find('all', array(
-			'conditions' => array('User.currentLogin >' => date('Y-m-d H:i:s', strtotime('-'. $minutes .' minutes'))),
+			'conditions' => array('User.currentLogin >' => date('Y-m-d H:i:s', strtotime('-' . $minutes . ' minutes'))),
 			'contain' => array('User'),
-			'cache' => array(__FUNCTION__ .'-'. $minutes, '+15 minutes')
+			'cache' => array(__METHOD__, $minutes),
+			'cacheExpires' => '+15 minutes'
 		));
 	}
 
@@ -206,7 +215,7 @@ class Profile extends ForumAppModel {
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function beforeSave($options) {
+	public function beforeSave($options = array()) {
 		if (isset($this->data['Profile']['signature'])) {
 			$censored = array_map('trim', explode(',', $this->settings['censored_words']));
 			$locale = $this->config['decodaLocales'][Configure::read('Config.language')];
