@@ -11,7 +11,7 @@
 /**
  * Enable RSS feeds.
  */
-Router::parseExtensions('rss');
+//Router::parseExtensions('rss');
 
 /**
  * Custom Forum routes.
