@@ -378,8 +378,8 @@ class Topic extends ForumAppModel {
 			'order' => array('Topic.created' => 'DESC'),
 			'contain' => array('User', 'LastPost', 'FirstPost'),
 			'limit' => $limit,
-			'cache' => array(__METHOD__, $limit),
-			'cacheExpires' => '+1 minute'
+			/*'cache' => array(__METHOD__, $limit),
+			'cacheExpires' => '+1 minute'*/
 		));
 	}
 
